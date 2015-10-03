@@ -181,6 +181,25 @@ private:
   uint16_t capacity_;
 };
 
+class PebbleTickTimer {
+public:
+	template <typename T> void subscribe(TimeUnits tick_units, T * handler) {
+		*(handler_ptr()) = handler;
+		tick_timer_service_subscribe(tick_units, &native_handler<T>);
+	}
+	void unsubscribe() {
+		tick_timer_service_unsubscribe();
+	}
+private:
+	template <typename T> static void native_handler(struct tm * tick_time, TimeUnits units_changed) {
+  	reinterpret_cast<T *>(*(handler_ptr()))->on_tick(tick_time, units_changed);
+  }
+	static void ** handler_ptr() {
+		static void * handler;
+		return &handler;
+	}
+};
+
 enum PebbleWindowAnimation {
   PebbleWindowNotAnimated,
   PebbleWindowAnimated,
@@ -230,7 +249,7 @@ public:
   	handlers_ = handlers;
     WindowHandlers nativeHandlers;
     nativeHandlers.load = &load_handler<T>;
-    nativeHandlers.unload = &unload_handler<T>;;
+    nativeHandlers.unload = &unload_handler<T>;
     nativeHandlers.appear = &appear_handler<T>;
     nativeHandlers.disappear = &disappear_handler<T>;
     window_set_window_handlers(handle_, nativeHandlers);
