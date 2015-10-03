@@ -11,9 +11,10 @@ public:
     push_window(window_, PebbleWindowAnimated);
   }
   void on_window_load(PebbleWindow & window) {
+    time_t now = time(nullptr);
     text_layer_.create(window_.get_bounds())
       .set_text_alignment(GTextAlignmentCenter)
-      .set_text(text_layer_text_.assign_format("(watch %d.%d)", 3, 14).c_str());
+      .set_text(text_layer_text_.assign_time_format(20, "%F %T", localtime(&now)).c_str());
     window_.add_child(text_layer_);
   }
   void on_window_unload(PebbleWindow & window) {

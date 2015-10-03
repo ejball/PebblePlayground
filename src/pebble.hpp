@@ -63,6 +63,11 @@ public:
     length_ += needed;
     return *this;
   }
+	PebbleString & append_time_format(size_t max, const char * format, const struct tm * tm) {
+		reserve(length_ + max + 1);
+    length_ += strftime(text_ + length_, max, format, tm);
+    return *this;
+  }
   PebbleString & assign(const PebbleString & text) {
 		clear();
     append(text);
@@ -81,6 +86,11 @@ public:
   template <typename... Args> PebbleString & assign_format(const char * format, Args... args) {
     clear();
     append_format(format, args...);
+    return *this;
+  }
+	PebbleString & assign_time_format(size_t max, const char * format, const struct tm * tm) {
+		clear();
+    append_time_format(max, format, tm);
     return *this;
   }
   const char * c_str() const {
