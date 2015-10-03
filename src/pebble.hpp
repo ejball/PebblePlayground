@@ -6,7 +6,7 @@ extern "C" {
 }
 
 #include <algorithm>
-#include <stdarg.h>
+#include <functional>
 
 #if 0
 #include <new>
@@ -228,15 +228,27 @@ public:
 class PebbleWindow : public PebbleLayer<PebbleWindow> {
 public:
   PebbleWindow()
-  	: handle_(nullptr) {}
+  	: handle_(nullptr),
+	  handlers_(nullptr) {
+  }
   void create() {
     destroy();
     handle_ = window_create();
+    window_set_user_data(handle_, this);
   }
   void destroy() {
     if (handle_) {
       window_destroy(handle_);
     }
+  }
+  template <typename T> void set_window_handlers(T * handlers) {
+	handlers_ = handlers;
+    WindowHandlers nativeHandlers;
+    nativeHandlers.load = &load_handler<T>;
+    nativeHandlers.unload = nullptr;
+    nativeHandlers.appear = nullptr;
+    nativeHandlers.disappear = nullptr;
+    window_set_window_handlers(handle_, nativeHandlers);
   }
   Window * get_handle() {
     return handle_;
@@ -247,8 +259,16 @@ public:
   ~PebbleWindow() {
     destroy();
   }
+  static PebbleWindow * from_handle(Window * handle) {
+    return reinterpret_cast<PebbleWindow *>(window_get_user_data(handle));
+  }
 private:
+  template <typename T> static void load_handler(Window * window) {
+    PebbleWindow * pw = from_handle(window);
+	reinterpret_cast<T *>(pw->handlers_)->on_window_load(pw);
+  }
   Window * handle_;
+  void * handlers_;
 };
 
 #if 0

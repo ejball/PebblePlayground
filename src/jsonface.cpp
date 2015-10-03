@@ -44,42 +44,38 @@ private:
   PebbleTextLayer text_layer_;
   PebbleString text_layer_text_;
 };
+#endif
 
-class OurApp : public PebbleApp<OurApp> {
+class OurApp : public PebbleApp {
 public:
   OurApp() {
     //window_set_click_config_provider(m_window.get_handle(), click_config_provider);
-    m_window.create();
-    push_window(m_window, PebbleWindowAnimated);
+    //window.set_load_handler([](){});
+    window_.create();
+    GRect bounds = window_.get_bounds();
+    
+    text_layer_.create(bounds);
+    text_layer_.set_text_alignment(GTextAlignmentCenter);
+    
+    text_layer_text_.assign_format("(watch %d.%d)", 3, 14);
+    text_layer_.set_text(text_layer_text_.c_str());
+    //text_layer.set_text("what?");
+    
+    window_.add_child(text_layer_);
+    
+    push_window(window_, PebbleWindowAnimated);
   }
 private:
-  PebbleWindow m_window;
+  PebbleWindow window_;
+  PebbleTextLayer text_layer_;
+  PebbleString text_layer_text_;
 };
-#endif
 
 }
 
 extern "C" int main(void) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Initializing...");
-  PebbleApp app;
-  
-  PebbleWindow window;
-  window.create();
-  GRect bounds = window.get_bounds();
-  
-  PebbleTextLayer text_layer;
-  text_layer.create(bounds);
-  text_layer.set_text_alignment(GTextAlignmentCenter);
-  
-  PebbleString text_layer_text;
-  text_layer_text.assign_format("(watch %d.%d)", 3, 14);
-  text_layer.set_text(text_layer_text.c_str());
-  //text_layer.set_text("what?");
-  
-  window.add_child(text_layer);
-  
-  app.push_window(window, PebbleWindowAnimated);
-
+  OurApp app;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting...");
   app.event_loop();
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Finishing...");
