@@ -245,9 +245,9 @@ public:
 	handlers_ = handlers;
     WindowHandlers nativeHandlers;
     nativeHandlers.load = &load_handler<T>;
-    nativeHandlers.unload = nullptr;
-    nativeHandlers.appear = nullptr;
-    nativeHandlers.disappear = nullptr;
+    nativeHandlers.unload = &unload_handler<T>;;
+    nativeHandlers.appear = &appear_handler<T>;
+    nativeHandlers.disappear = &disappear_handler<T>;
     window_set_window_handlers(handle_, nativeHandlers);
   }
   Window * get_handle() {
@@ -266,6 +266,18 @@ private:
   template <typename T> static void load_handler(Window * window) {
     PebbleWindow * pw = from_handle(window);
 	reinterpret_cast<T *>(pw->handlers_)->on_window_load(pw);
+  }
+  template <typename T> static void unload_handler(Window * window) {
+    PebbleWindow * pw = from_handle(window);
+	reinterpret_cast<T *>(pw->handlers_)->on_window_unload(pw);
+  }
+  template <typename T> static void appear_handler(Window * window) {
+    PebbleWindow * pw = from_handle(window);
+	reinterpret_cast<T *>(pw->handlers_)->on_window_appear(pw);
+  }
+  template <typename T> static void disappear_handler(Window * window) {
+    PebbleWindow * pw = from_handle(window);
+	reinterpret_cast<T *>(pw->handlers_)->on_window_disappear(pw);
   }
   Window * handle_;
   void * handlers_;

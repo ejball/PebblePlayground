@@ -50,8 +50,8 @@ class OurApp : public PebbleApp {
 public:
   OurApp() {
     //window_set_click_config_provider(m_window.get_handle(), click_config_provider);
-    //window.set_load_handler([](){});
     window_.create();
+    window_.set_window_handlers(this);
     GRect bounds = window_.get_bounds();
     
     text_layer_.create(bounds);
@@ -64,6 +64,18 @@ public:
     window_.add_child(text_layer_);
     
     push_window(window_, PebbleWindowAnimated);
+  }
+  void on_window_load(PebbleWindow * window) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window loaded!");
+  }
+  void on_window_unload(PebbleWindow * window) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window unloaded!");
+  }
+  void on_window_appear(PebbleWindow * window) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window appeared!");
+  }
+  void on_window_disappear(PebbleWindow * window) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window disappeared!");
   }
 private:
   PebbleWindow window_;
