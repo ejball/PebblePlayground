@@ -10,18 +10,18 @@ public:
       .set_window_handlers(this);
     push_window(window_, PebbleWindowAnimated);
   }
-  void on_window_load(PebbleWindow * window) {
+  void on_window_load(PebbleWindow & window) {
     text_layer_.create(window_.get_bounds())
       .set_text_alignment(GTextAlignmentCenter)
       .set_text(text_layer_text_.assign_format("(watch %d.%d)", 3, 14).c_str());
     window_.add_child(text_layer_);
   }
-  void on_window_unload(PebbleWindow * window) {
+  void on_window_unload(PebbleWindow & window) {
     text_layer_.destroy();
   }
-  void on_window_appear(PebbleWindow * window) {
+  void on_window_appear(PebbleWindow & window) {
   }
-  void on_window_disappear(PebbleWindow * window) {
+  void on_window_disappear(PebbleWindow & window) {
   }
 private:
   PebbleWindow window_;
