@@ -1,81 +1,27 @@
 #include "pebble.hpp"
 
-#if 0
-extern "C" {
-
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
-}
-
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Up");
-}
-
-static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Down");
-}
-
-static void click_config_provider(void *context) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
-
-}
-#endif
-
 namespace {
-
-#if 0  
-class OurWindow : public PebbleWindowT<OurWindow> {
-public:
-  void on_load() {
-    GRect bounds = get_bounds();
-    text_layer_.create(bounds);
-    text_layer_text_.reserve(100).assign_format("(watch %d.%d)", 3, 14);
-    text_layer_.set_text(text_layer_text_.c_str());
-    text_layer_.set_text_alignment(GTextAlignmentCenter);
-    add_child(text_layer_);
-  }
-  void on_unload() {
-    text_layer_.destroy();
-  }
-private:
-  PebbleTextLayer text_layer_;
-  PebbleString text_layer_text_;
-};
-#endif
 
 class OurApp : public PebbleApp {
 public:
   OurApp() {
-    //window_set_click_config_provider(m_window.get_handle(), click_config_provider);
-    window_.create();
-    window_.set_window_handlers(this);
-    GRect bounds = window_.get_bounds();
-    
-    text_layer_.create(bounds);
-    text_layer_.set_text_alignment(GTextAlignmentCenter);
-    
-    text_layer_text_.assign_format("(watch %d.%d)", 3, 14);
-    text_layer_.set_text(text_layer_text_.c_str());
-    //text_layer.set_text("what?");
-    
-    window_.add_child(text_layer_);
-    
+    window_.create()
+      .set_fullscreen(true)
+      .set_window_handlers(this);
     push_window(window_, PebbleWindowAnimated);
   }
   void on_window_load(PebbleWindow * window) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window loaded!");
+    text_layer_.create(window_.get_bounds())
+      .set_text_alignment(GTextAlignmentCenter)
+      .set_text(text_layer_text_.assign_format("(watch %d.%d)", 3, 14).c_str());
+    window_.add_child(text_layer_);
   }
   void on_window_unload(PebbleWindow * window) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window unloaded!");
+    text_layer_.destroy();
   }
   void on_window_appear(PebbleWindow * window) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window appeared!");
   }
   void on_window_disappear(PebbleWindow * window) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Window disappeared!");
   }
 private:
   PebbleWindow window_;
@@ -86,9 +32,6 @@ private:
 }
 
 extern "C" int main(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Initializing...");
   OurApp app;
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting...");
   app.event_loop();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Finishing...");
 }

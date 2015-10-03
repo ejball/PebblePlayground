@@ -8,19 +8,6 @@ extern "C" {
 #include <algorithm>
 #include <functional>
 
-#if 0
-#include <new>
-#include <vector>
-
-void * operator new(size_t size) {
-  return malloc(size);
-}
-
-void operator delete(void * ptr) {
-  free(ptr);
-}
-#endif
-
 class PebbleString {
 public:
 	PebbleString() {
@@ -69,11 +56,9 @@ public:
 	template <typename... Args> PebbleString & append_format(const char * format, Args... args) {
 		int available = capacity_ - length_;
 		int needed = snprintf(text_ + length_, capacity_ - length_, format, args...);
-		//printf("available %d, needed %d", available, needed);
 		if (needed > available) {
 			reserve(length_ + needed + 1);
 			needed = snprintf(text_ + length_, capacity_ - length_, format, args...);
-			//printf("new needed %d", needed);
 		}
 		length_ += needed;
 		return *this;
@@ -200,19 +185,6 @@ public:
   }
 };
 
-#if 0
-template <typename TDerived> class PebbleApp {
-public:
-  template <typename TWindow> void push_window(TWindow & window, PebbleWindowAnimation animation) {
-    window_stack_push(window.get_handle(), animation != PebbleWindowNotAnimated);
-  }
-  static void run() {
-    TDerived app;
-    app_event_loop();
-  }
-};
-#endif
-
 template <typename TDerived> class PebbleLayer {
 public:
   GRect get_bounds() {
@@ -231,17 +203,19 @@ public:
   	: handle_(nullptr),
 	  handlers_(nullptr) {
   }
-  void create() {
+  PebbleWindow & create() {
     destroy();
     handle_ = window_create();
     window_set_user_data(handle_, this);
+	return *this;
   }
   void destroy() {
     if (handle_) {
       window_destroy(handle_);
+	  handle_ = nullptr;
     }
   }
-  template <typename T> void set_window_handlers(T * handlers) {
+  template <typename T> PebbleWindow & set_window_handlers(T * handlers) {
 	handlers_ = handlers;
     WindowHandlers nativeHandlers;
     nativeHandlers.load = &load_handler<T>;
@@ -249,6 +223,11 @@ public:
     nativeHandlers.appear = &appear_handler<T>;
     nativeHandlers.disappear = &disappear_handler<T>;
     window_set_window_handlers(handle_, nativeHandlers);
+	return *this;
+  }
+  PebbleWindow & set_fullscreen(bool enabled) {
+	window_set_fullscreen(handle_, enabled);
+	return *this;
   }
   Window * get_handle() {
     return handle_;
@@ -283,54 +262,27 @@ private:
   void * handlers_;
 };
 
-#if 0
-template <typename TDerived> class PebbleWindowT : public PebbleWindow {
-public:
-  PebbleWindowT() {
-    create();
-    window_set_user_data(get_handle(), static_cast<TDerived *>(this));
-    
-    WindowHandlers handlers;
-    handlers.load = &load_handler;
-    handlers.unload = &unload_handler;
-    handlers.appear = nullptr;
-    handlers.disappear = nullptr;
-    window_set_window_handlers(get_handle(), handlers);
-  }
-  static TDerived * from_handle(Window * handle) {
-    return reinterpret_cast<TDerived *>(window_get_user_data(handle));
-  }
-  void on_load() {
-  }
-  void on_unload() {
-  }
-private:
-  static void load_handler(Window * window) {
-    from_handle(window)->on_load();
-  }
-  static void unload_handler(Window * window) {
-    from_handle(window)->on_unload();
-  }
-};
-#endif
-
 class PebbleTextLayer {
 public:
   PebbleTextLayer() : handle_(nullptr) {}
-  void create(GRect frame) {
+  PebbleTextLayer & create(GRect frame) {
     destroy();
     handle_ = text_layer_create(frame);
+	return *this;
   }
   void destroy() {
     if (handle_) {
       text_layer_destroy(handle_);
+	  handle_ = nullptr;
     }
   }
-  void set_text(const char * text) {
+  PebbleTextLayer & set_text(const char * text) {
     text_layer_set_text(handle_, text);
+	return *this;
   }
-  void set_text_alignment(GTextAlignment alignment) {
+  PebbleTextLayer & set_text_alignment(GTextAlignment alignment) {
     text_layer_set_text_alignment(handle_, alignment);
+	return *this;
   }
   TextLayer * get_handle() {
     return handle_;
