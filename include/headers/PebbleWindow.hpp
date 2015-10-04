@@ -1,3 +1,13 @@
+template <typename T> class PebbleClickConfig {
+public:
+  PebbleClickConfig<T> & single_click_subscribe(ButtonId button_id) {
+    window_single_click_subscribe(button_id, &single_click_handler);
+    return *this;
+  }
+private:
+  static void single_click_handler(ClickRecognizerRef recognizer, void * context);
+};
+
 class PebbleWindow : public PebbleLayer<PebbleWindow> {
 public:
   PebbleWindow()
@@ -26,6 +36,11 @@ public:
   }
   template <typename T> PebbleWindow & set_window_handlers(T * handlers) {
     set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, &appear_handler<T>, &disappear_handler<T>);
+    return *this;
+  }
+  template <typename T> PebbleWindow & set_click_config_provider(T * provider) {
+    click_config_provider_ = provider;
+    window_set_click_config_provider(handle_, &click_config_provider<T>);
     return *this;
   }
   PebbleWindow & set_fullscreen(bool enabled) {
@@ -71,6 +86,18 @@ private:
     PebbleWindow & pw = from_handle(window);
     reinterpret_cast<T *>(pw.handlers_)->on_window_disappear(pw);
   }
+  template <typename T> static void click_config_provider(void * context) {
+    PebbleWindow & pw = from_handle(static_cast<Window *>(context));
+    PebbleClickConfig<T> config;
+    reinterpret_cast<T *>(pw.click_config_provider_)->on_click_config(pw, config);
+  }
+  template <typename T> friend class PebbleClickConfig;
   Window * handle_;
   void * handlers_;
+  void * click_config_provider_;
 };
+
+template <typename T> void PebbleClickConfig<T>::single_click_handler(ClickRecognizerRef recognizer, void * context) {
+  PebbleWindow & pw = PebbleWindow::from_handle(static_cast<Window *>(context));
+  reinterpret_cast<T *>(pw.click_config_provider_)->on_single_click(pw, recognizer);
+}
