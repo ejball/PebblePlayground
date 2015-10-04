@@ -1,18 +1,18 @@
 template <typename T> class PebbleClickConfig {
 public:
-  PebbleClickConfig<T> & single_click_up() {
+  PebbleClickConfig<T> & handle_single_click_up() {
     window_single_click_subscribe(BUTTON_ID_UP, &single_click_up_handler);
     return *this;
   }
-  PebbleClickConfig<T> & single_click_down() {
+  PebbleClickConfig<T> & handle_single_click_down() {
     window_single_click_subscribe(BUTTON_ID_DOWN, &single_click_down_handler);
     return *this;
   }
-  PebbleClickConfig<T> & single_click_select() {
+  PebbleClickConfig<T> & handle_single_click_select() {
     window_single_click_subscribe(BUTTON_ID_SELECT, &single_click_select_handler);
     return *this;
   }
-  PebbleClickConfig<T> & single_click_back() {
+  PebbleClickConfig<T> & handle_single_click_back() {
     window_single_click_subscribe(BUTTON_ID_BACK, &single_click_back_handler);
     return *this;
   }
@@ -54,8 +54,8 @@ public:
     set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, &appear_handler<T>, &disappear_handler<T>);
     return *this;
   }
-  template <typename T> PebbleWindow & set_click_config_provider(T * provider) {
-    click_config_provider_ = provider;
+  template <typename T> PebbleWindow & handle_clicks(T * handlers) {
+    click_handlers_ = handlers;
     window_set_click_config_provider(handle_, &click_config_provider<T>);
     return *this;
   }
@@ -101,30 +101,30 @@ private:
   template <typename T> static void click_config_provider(void * context) {
     PebbleWindow & pw = from_handle(static_cast<Window *>(context));
     PebbleClickConfig<T> config;
-    reinterpret_cast<T *>(pw.click_config_provider_)->on_click_config(pw, config);
+    reinterpret_cast<T *>(pw.click_handlers_)->on_click_config(pw, config);
   }
   template <typename T> friend class PebbleClickConfig;
   Window * handle_;
   void * handlers_;
-  void * click_config_provider_;
+  void * click_handlers_;
 };
 
 template <typename T> void PebbleClickConfig<T>::single_click_up_handler(ClickRecognizerRef recognizer, void * context) {
   PebbleWindow & pw = PebbleWindow::from_handle(static_cast<Window *>(context));
-  reinterpret_cast<T *>(pw.click_config_provider_)->on_single_click_up(pw, recognizer);
+  reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_up(pw, recognizer);
 }
 
 template <typename T> void PebbleClickConfig<T>::single_click_down_handler(ClickRecognizerRef recognizer, void * context) {
   PebbleWindow & pw = PebbleWindow::from_handle(static_cast<Window *>(context));
-  reinterpret_cast<T *>(pw.click_config_provider_)->on_single_click_down(pw, recognizer);
+  reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_down(pw, recognizer);
 }
 
 template <typename T> void PebbleClickConfig<T>::single_click_select_handler(ClickRecognizerRef recognizer, void * context) {
   PebbleWindow & pw = PebbleWindow::from_handle(static_cast<Window *>(context));
-  reinterpret_cast<T *>(pw.click_config_provider_)->on_single_click_select(pw, recognizer);
+  reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_select(pw, recognizer);
 }
 
 template <typename T> void PebbleClickConfig<T>::single_click_back_handler(ClickRecognizerRef recognizer, void * context) {
   PebbleWindow & pw = PebbleWindow::from_handle(static_cast<Window *>(context));
-  reinterpret_cast<T *>(pw.click_config_provider_)->on_single_click_back(pw, recognizer);
+  reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_back(pw, recognizer);
 }

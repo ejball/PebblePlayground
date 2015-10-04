@@ -6,7 +6,7 @@ public:
     tick_timer_.subscribe(SECOND_UNIT, this);
     window_.create()
       .set_window_handlers_load_unload(this)
-      .set_click_config_provider(this);
+      .handle_clicks(this);
     push_window_animated(window_);
   }
   void on_window_load(PebbleWindow & window) {
@@ -23,7 +23,10 @@ public:
     refresh_time(tick_time);
   }
   void on_click_config(PebbleWindow & window, PebbleClickConfig<OurApp> config) {
-    config.single_click_select().single_click_up().single_click_down().single_click_back();
+    config.handle_single_click_select()
+      .handle_single_click_up()
+      .handle_single_click_down()
+      .handle_single_click_back();
   }
   void on_single_click_select(PebbleWindow & window, ClickRecognizerRef ref) {
     text_layer_.set_text("select");
