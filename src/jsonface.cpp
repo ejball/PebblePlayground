@@ -1,6 +1,4 @@
-#include "pebble.hpp"
-
-namespace {
+#include "../include/pebble.hpp"
 
 class OurApp : public PebbleApp {
 public:
@@ -33,8 +31,6 @@ private:
   PebbleTextLayer text_layer_;
   PebbleString text_layer_text_;
 };
-
-}
 
 extern "C" int main(void) {
   OurApp app;
