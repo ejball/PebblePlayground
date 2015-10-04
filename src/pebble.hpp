@@ -63,13 +63,13 @@ public:
     length_ += needed;
     return *this;
   }
-	PebbleString & append_time_format(size_t max, const char * format, const struct tm * tm) {
-		reserve(length_ + max + 1);
+  PebbleString & append_time_format(size_t max, const char * format, const struct tm * tm) {
+    reserve(length_ + max + 1);
     length_ += strftime(text_ + length_, max, format, tm);
     return *this;
   }
   PebbleString & assign(const PebbleString & text) {
-		clear();
+    clear();
     append(text);
     return *this;
   }
@@ -88,8 +88,8 @@ public:
     append_format(format, args...);
     return *this;
   }
-	PebbleString & assign_time_format(size_t max, const char * format, const struct tm * tm) {
-		clear();
+  PebbleString & assign_time_format(size_t max, const char * format, const struct tm * tm) {
+    clear();
     append_time_format(max, format, tm);
     return *this;
   }
@@ -183,32 +183,30 @@ private:
 
 class PebbleTickTimer {
 public:
-	template <typename T> void subscribe(TimeUnits tick_units, T * handler) {
-		*(handler_ptr()) = handler;
-		tick_timer_service_subscribe(tick_units, &native_handler<T>);
-	}
-	void unsubscribe() {
-		tick_timer_service_unsubscribe();
-	}
-private:
-	template <typename T> static void native_handler(struct tm * tick_time, TimeUnits units_changed) {
-  	reinterpret_cast<T *>(*(handler_ptr()))->on_tick(tick_time, units_changed);
+  template <typename T> void subscribe(TimeUnits tick_units, T * handler) {
+    *(handler_ptr()) = handler;
+    tick_timer_service_subscribe(tick_units, &native_handler<T>);
   }
-	static void ** handler_ptr() {
-		static void * handler;
-		return &handler;
-	}
-};
-
-enum PebbleWindowAnimation {
-  PebbleWindowNotAnimated,
-  PebbleWindowAnimated,
+  void unsubscribe() {
+    tick_timer_service_unsubscribe();
+  }
+private:
+  template <typename T> static void native_handler(struct tm * tick_time, TimeUnits units_changed) {
+    reinterpret_cast<T *>(*(handler_ptr()))->on_tick(tick_time, units_changed);
+  }
+  static void ** handler_ptr() {
+    static void * handler;
+    return &handler;
+  }
 };
 
 class PebbleApp {
 public:
-  template <typename TWindow> void push_window(TWindow & window, PebbleWindowAnimation animation) {
-    window_stack_push(window.get_handle(), animation != PebbleWindowNotAnimated);
+  template <typename TWindow> void push_window_animated(TWindow & window) {
+    window_stack_push(window.get_handle(), true);
+  }
+  template <typename TWindow> void push_window_not_animated(TWindow & window) {
+    window_stack_push(window.get_handle(), false);
   }
   void event_loop() {
     app_event_loop();
@@ -218,12 +216,12 @@ public:
 template <typename TDerived> class PebbleLayer {
 public:
   GRect get_bounds() {
-  	return layer_get_bounds(static_cast<TDerived *>(this)->get_layer_handle());
+    return layer_get_bounds(static_cast<TDerived *>(this)->get_layer_handle());
   }
   template <typename TLayer> TDerived & add_child(TLayer & layer) {
-	  TDerived & derived = static_cast<TDerived &>(*this);
-	  layer_add_child(derived.get_layer_handle(), layer.get_layer_handle());
-	  return derived;
+    TDerived & derived = static_cast<TDerived &>(*this);
+    layer_add_child(derived.get_layer_handle(), layer.get_layer_handle());
+    return derived;
   }
 };
 
@@ -237,33 +235,35 @@ public:
     destroy();
     handle_ = window_create();
     window_set_user_data(handle_, this);
-  	return *this;
+    return *this;
   }
   void destroy() {
     if (handle_) {
       window_destroy(handle_);
-    	handle_ = nullptr;
+      handle_ = nullptr;
     }
   }
+  template <typename T> PebbleWindow & set_window_handlers_load_unload(T * handlers, LoadHandlers _) {
+    set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, nullptr, nullptr);
+    return *this;
+  }
+  template <typename T> PebbleWindow & set_window_handlers_appear_disappear(T * handlers, AppearHandlers _) {
+    set_window_handlers(handlers, nullptr, nullptr, &appear_handler<T>, &disappear_handler<T>);
+    return *this;
+  }
   template <typename T> PebbleWindow & set_window_handlers(T * handlers) {
-  	handlers_ = handlers;
-    WindowHandlers nativeHandlers;
-    nativeHandlers.load = &load_handler<T>;
-    nativeHandlers.unload = &unload_handler<T>;
-    nativeHandlers.appear = &appear_handler<T>;
-    nativeHandlers.disappear = &disappear_handler<T>;
-    window_set_window_handlers(handle_, nativeHandlers);
-  	return *this;
+    set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, &appear_handler<T>, &disappear_handler<T>);
+    return *this;
   }
   PebbleWindow & set_fullscreen(bool enabled) {
-  	window_set_fullscreen(handle_, enabled);
-  	return *this;
+    window_set_fullscreen(handle_, enabled);
+    return *this;
   }
   Window * get_handle() {
     return handle_;
   }
   Layer * get_layer_handle() {
-  	return window_get_root_layer(handle_);
+    return window_get_root_layer(handle_);
   }
   ~PebbleWindow() {
     destroy();
@@ -272,21 +272,31 @@ public:
     return *reinterpret_cast<PebbleWindow *>(window_get_user_data(handle));
   }
 private:
+  template <typename T> void set_window_handlers(T * handlers,
+    WindowHandler load, WindowHandler unload, WindowHandler appear, WindowHandler disappear) {
+    handlers_ = handlers;
+    WindowHandlers nativeHandlers;
+    nativeHandlers.load = load;
+    nativeHandlers.unload = unload;
+    nativeHandlers.appear = appear;
+    nativeHandlers.disappear = disappear;
+    window_set_window_handlers(handle_, nativeHandlers);
+  }
   template <typename T> static void load_handler(Window * window) {
     PebbleWindow & pw = from_handle(window);
-  	reinterpret_cast<T *>(pw.handlers_)->on_window_load(pw);
+    reinterpret_cast<T *>(pw.handlers_)->on_window_load(pw);
   }
   template <typename T> static void unload_handler(Window * window) {
     PebbleWindow & pw = from_handle(window);
-  	reinterpret_cast<T *>(pw.handlers_)->on_window_unload(pw);
+    reinterpret_cast<T *>(pw.handlers_)->on_window_unload(pw);
   }
   template <typename T> static void appear_handler(Window * window) {
     PebbleWindow & pw = from_handle(window);
-  	reinterpret_cast<T *>(pw.handlers_)->on_window_appear(pw);
+    reinterpret_cast<T *>(pw.handlers_)->on_window_appear(pw);
   }
   template <typename T> static void disappear_handler(Window * window) {
     PebbleWindow & pw = from_handle(window);
-  	reinterpret_cast<T *>(pw.handlers_)->on_window_disappear(pw);
+    reinterpret_cast<T *>(pw.handlers_)->on_window_disappear(pw);
   }
   Window * handle_;
   void * handlers_;
@@ -298,27 +308,27 @@ public:
   PebbleTextLayer & create(GRect frame) {
     destroy();
     handle_ = text_layer_create(frame);
-  	return *this;
+    return *this;
   }
   void destroy() {
     if (handle_) {
       text_layer_destroy(handle_);
-    	handle_ = nullptr;
+      handle_ = nullptr;
     }
   }
   PebbleTextLayer & set_text(const char * text) {
     text_layer_set_text(handle_, text);
-  	return *this;
+    return *this;
   }
   PebbleTextLayer & set_text_alignment(GTextAlignment alignment) {
     text_layer_set_text_alignment(handle_, alignment);
-  	return *this;
+    return *this;
   }
   TextLayer * get_handle() {
     return handle_;
   }
   Layer * get_layer_handle() {
-  	return text_layer_get_layer(handle_);
+    return text_layer_get_layer(handle_);
   }
   ~PebbleTextLayer() {
     destroy();

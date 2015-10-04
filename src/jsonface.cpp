@@ -8,8 +8,8 @@ public:
     tick_timer_.subscribe(SECOND_UNIT, this);
     window_.create()
       .set_fullscreen(true)
-      .set_window_handlers(this);
-    push_window(window_, PebbleWindowAnimated);
+      .set_window_handlers_load_unload(this);
+    push_window_animated(window_);
   }
   void on_window_load(PebbleWindow & window) {
     text_layer_.create(window_.get_bounds())
@@ -20,10 +20,6 @@ public:
   }
   void on_window_unload(PebbleWindow & window) {
     text_layer_.destroy();
-  }
-  void on_window_appear(PebbleWindow & window) {
-  }
-  void on_window_disappear(PebbleWindow & window) {
   }
   void on_tick(struct tm * tick_time, TimeUnits units_changed) {
     refresh_time(tick_time);
