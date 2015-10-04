@@ -23,13 +23,19 @@ public:
     refresh_time(tick_time);
   }
   void on_click_config(PebbleWindow & window, PebbleClickConfig<OurApp> config) {
-    config.single_click_subscribe(BUTTON_ID_SELECT)
-      .single_click_subscribe(BUTTON_ID_UP)
-      .single_click_subscribe(BUTTON_ID_DOWN);
+    config.single_click_select().single_click_up().single_click_down().single_click_back();
   }
-  void on_single_click(PebbleWindow & window, ClickRecognizerRef ref) {
-    ButtonId button_id = click_recognizer_get_button_id(ref);
-    text_layer_.set_text(button_id == BUTTON_ID_UP ? "up" : button_id == BUTTON_ID_DOWN ? "down" : "click");
+  void on_single_click_select(PebbleWindow & window, ClickRecognizerRef ref) {
+    text_layer_.set_text("select");
+  }
+  void on_single_click_up(PebbleWindow & window, ClickRecognizerRef ref) {
+    text_layer_.set_text("up");
+  }
+  void on_single_click_down(PebbleWindow & window, ClickRecognizerRef ref) {
+    text_layer_.set_text("down");
+  }
+  void on_single_click_back(PebbleWindow & window, ClickRecognizerRef ref) {
+    text_layer_.set_text("back");
   }
 private:
   void refresh_time(struct tm * tick_time) {
