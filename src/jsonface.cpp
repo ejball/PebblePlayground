@@ -22,7 +22,7 @@ public:
   void on_tick(struct tm * tick_time, TimeUnits units_changed) {
     refresh_time(tick_time);
   }
-  void on_click_config(PebbleWindow & window, PebbleClickConfig<OurApp> config) {
+  void on_click_config(PebbleWindow & window, PebbleWindow::ClickConfig<OurApp> config) {
     config.handle_single_click_select()
       .handle_single_click_up()
       .handle_single_click_down()
