@@ -18,6 +18,7 @@ public:
     destroy();
     handle_ = window_create();
     window_set_user_data(handle_, this);
+    window_set_fullscreen(handle_, true);
     return *this;
   }
   void destroy() {
@@ -41,10 +42,6 @@ public:
   template <typename T> PebbleWindow & set_click_config_provider(T * provider) {
     click_config_provider_ = provider;
     window_set_click_config_provider(handle_, &click_config_provider<T>);
-    return *this;
-  }
-  PebbleWindow & set_fullscreen(bool enabled) {
-    window_set_fullscreen(handle_, enabled);
     return *this;
   }
   Window * get_handle() {

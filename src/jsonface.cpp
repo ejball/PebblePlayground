@@ -5,7 +5,6 @@ public:
   OurApp() {
     tick_timer_.subscribe(SECOND_UNIT, this);
     window_.create()
-      .set_fullscreen(true)
       .set_window_handlers_load_unload(this)
       .set_click_config_provider(this);
     push_window_animated(window_);
