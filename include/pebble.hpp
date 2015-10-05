@@ -6,7 +6,8 @@ extern "C" {
 }
 
 #include <algorithm>
-#include <functional>
+
+#define ASSERT(X) do { if (!(X)) { APP_LOG(APP_LOG_LEVEL_ERROR, "Assertion failure!"); free((void *)1); } } while(false)
 
 #include "headers/PebbleString.hpp"
 #include "headers/PebbleTickTimer.hpp"

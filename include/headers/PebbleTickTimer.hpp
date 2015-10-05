@@ -2,14 +2,17 @@ class PebbleTickTimer {
 public:
   template <typename T> void subscribe(TimeUnits tick_units, T * handler) {
     if (handler != nullptr) {
-      *(handler_ptr()) = handler;
+      void ** ptr = get_handler_ptr();
+      ASSERT(*ptr == nullptr);
+      *ptr = handler;
       tick_timer_service_subscribe(tick_units, &native_handler<T>);
     }
   }
   void unsubscribe() {
-    if (*(handler_ptr()) != nullptr) {
+    void ** ptr = get_handler_ptr();
+    if (*ptr != nullptr) {
       tick_timer_service_unsubscribe();
-      *(handler_ptr()) = nullptr;
+      *ptr = nullptr;
     }
   }
   ~PebbleTickTimer() {
@@ -17,9 +20,10 @@ public:
   }
 private:
   template <typename T> static void native_handler(struct tm * tick_time, TimeUnits units_changed) {
-    reinterpret_cast<T *>(*(handler_ptr()))->on_tick(tick_time, units_changed);
+    void ** ptr = get_handler_ptr();
+    reinterpret_cast<T *>(*ptr)->on_tick(tick_time, units_changed);
   }
-  static void ** handler_ptr() {
+  static void ** get_handler_ptr() {
     static void * handler = nullptr;
     return &handler;
   }
