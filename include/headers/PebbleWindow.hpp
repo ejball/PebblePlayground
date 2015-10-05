@@ -17,16 +17,11 @@ public:
       handle_ = nullptr;
     }
   }
-  template <typename T> PebbleWindow & set_window_handlers_load_unload(T * handlers) {
-    set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, nullptr, nullptr);
-    return *this;
-  }
-  template <typename T> PebbleWindow & set_window_handlers_appear_disappear(T * handlers) {
-    set_window_handlers(handlers, nullptr, nullptr, &appear_handler<T>, &disappear_handler<T>);
-    return *this;
-  }
-  template <typename T> PebbleWindow & set_window_handlers(T * handlers) {
-    set_window_handlers(handlers, &load_handler<T>, &unload_handler<T>, &appear_handler<T>, &disappear_handler<T>);
+  template <typename T> PebbleWindow & handle_events(T * handlers) {
+    event_handlers_ = handlers;
+    EventConfig<T> config;
+    handlers->on_event_config(*this, config);
+    window_set_window_handlers(handle_, config.window_handlers_);
     return *this;
   }
   template <typename T> PebbleWindow & handle_clicks(T * handlers) {
@@ -46,8 +41,54 @@ public:
   static PebbleWindow & from_handle(Window * handle) {
     return *reinterpret_cast<PebbleWindow *>(window_get_user_data(handle));
   }
+  template <typename T> class EventConfig {
+  public:
+    EventConfig() {
+      window_handlers_.load = nullptr;
+      window_handlers_.unload = nullptr;
+      window_handlers_.appear = nullptr;
+      window_handlers_.disappear = nullptr;
+    }
+    EventConfig<T> & handle_load() {
+      window_handlers_.load = &load_handler;
+      return *this;
+    }
+    EventConfig<T> & handle_unload() {
+      window_handlers_.unload = &unload_handler;
+      return *this;
+    }
+    EventConfig<T> & handle_appear() {
+      window_handlers_.appear = &appear_handler;
+      return *this;
+    }
+    EventConfig<T> & handle_disappear() {
+      window_handlers_.disappear = &disappear_handler;
+      return *this;
+    }
+  private:
+    static void load_handler(Window * window) {
+      PebbleWindow & pw = from_handle(window);
+      reinterpret_cast<T *>(pw.event_handlers_)->on_window_load(pw);
+    }
+    static void unload_handler(Window * window) {
+      PebbleWindow & pw = from_handle(window);
+      reinterpret_cast<T *>(pw.event_handlers_)->on_window_unload(pw);
+    }
+    static void appear_handler(Window * window) {
+      PebbleWindow & pw = from_handle(window);
+      reinterpret_cast<T *>(pw.event_handlers_)->on_window_appear(pw);
+    }
+    static void disappear_handler(Window * window) {
+      PebbleWindow & pw = from_handle(window);
+      reinterpret_cast<T *>(pw.event_handlers_)->on_window_disappear(pw);
+    }
+    friend PebbleWindow;
+    WindowHandlers window_handlers_;
+  };
   template <typename T> class ClickConfig {
   public:
+    ClickConfig() {
+    }
     ClickConfig<T> & handle_single_click_up() {
       window_single_click_subscribe(BUTTON_ID_UP, &single_click_up_handler);
       return *this;
@@ -83,32 +124,6 @@ public:
     }
   };
 private:
-  template <typename T> void set_window_handlers(T * handlers,
-    WindowHandler load, WindowHandler unload, WindowHandler appear, WindowHandler disappear) {
-    handlers_ = handlers;
-    WindowHandlers nativeHandlers;
-    nativeHandlers.load = load;
-    nativeHandlers.unload = unload;
-    nativeHandlers.appear = appear;
-    nativeHandlers.disappear = disappear;
-    window_set_window_handlers(handle_, nativeHandlers);
-  }
-  template <typename T> static void load_handler(Window * window) {
-    PebbleWindow & pw = from_handle(window);
-    reinterpret_cast<T *>(pw.handlers_)->on_window_load(pw);
-  }
-  template <typename T> static void unload_handler(Window * window) {
-    PebbleWindow & pw = from_handle(window);
-    reinterpret_cast<T *>(pw.handlers_)->on_window_unload(pw);
-  }
-  template <typename T> static void appear_handler(Window * window) {
-    PebbleWindow & pw = from_handle(window);
-    reinterpret_cast<T *>(pw.handlers_)->on_window_appear(pw);
-  }
-  template <typename T> static void disappear_handler(Window * window) {
-    PebbleWindow & pw = from_handle(window);
-    reinterpret_cast<T *>(pw.handlers_)->on_window_disappear(pw);
-  }
   template <typename T> static void click_config_provider(void * context) {
     PebbleWindow & pw = from_handle(static_cast<Window *>(context));
     ClickConfig<T> config;
@@ -116,5 +131,6 @@ private:
   }
   Window * handle_;
   void * handlers_;
+  void * event_handlers_;
   void * click_handlers_;
 };

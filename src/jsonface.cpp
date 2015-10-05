@@ -5,7 +5,7 @@ public:
   OurApp() {
     tick_timer_.subscribe(SECOND_UNIT, this);
     window_.create()
-      .set_window_handlers_load_unload(this)
+      .handle_events(this)
       .handle_clicks(this);
     push_window_animated(window_);
   }
@@ -22,7 +22,10 @@ public:
   void on_tick(struct tm * tick_time, TimeUnits units_changed) {
     refresh_time(tick_time);
   }
-  void on_click_config(PebbleWindow & window, PebbleWindow::ClickConfig<OurApp> config) {
+  void on_event_config(PebbleWindow & window, PebbleWindow::EventConfig<OurApp> & config) {
+    config.handle_load().handle_unload();
+  }
+  void on_click_config(PebbleWindow & window, PebbleWindow::ClickConfig<OurApp> & config) {
     config.handle_single_click_select()
       .handle_single_click_up()
       .handle_single_click_down()
