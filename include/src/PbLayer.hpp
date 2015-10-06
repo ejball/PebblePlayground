@@ -1,4 +1,8 @@
-template <typename TDerived> class PebbleLayer {
+#ifndef PBCPP_H
+#error Include PbCpp.hpp instead.
+#endif
+
+template <typename TDerived> class PbLayer {
 public:
   GRect get_bounds() {
     return layer_get_bounds(static_cast<TDerived *>(this)->get_layer_handle());

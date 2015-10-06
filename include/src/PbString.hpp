@@ -1,21 +1,25 @@
-class PebbleString {
+#ifndef PBCPP_H
+#error Include PbCpp.hpp instead.
+#endif
+
+class PbString {
 public:
-  PebbleString() {
+  PbString() {
     init();
   }
-  explicit PebbleString(const char * text) {
+  explicit PbString(const char * text) {
     init();
     append(text);
   }
-  PebbleString(const char * text, size_t length) {
+  PbString(const char * text, size_t length) {
     init();
     append(text, length);
   }
-  PebbleString(PebbleString && text) {
+  PbString(PbString && text) {
     init();
     swap(text);
   }
-  PebbleString & operator =(PebbleString && text) {
+  PbString & operator =(PbString && text) {
     if (this != &text) {
       destroy();
       init();
@@ -23,18 +27,18 @@ public:
     }
     return *this;
   }
-  ~PebbleString() {
+  ~PbString() {
     destroy();
   }
-  PebbleString & append(const PebbleString & text) {
+  PbString & append(const PbString & text) {
     append(text.text_, text.length_);
     return *this;
   }
-  PebbleString & append(const char * text) {
+  PbString & append(const char * text) {
     append(text, strlen(text));
     return *this;
   }
-  PebbleString & append(const char * text, size_t length) {
+  PbString & append(const char * text, size_t length) {
     if (length != 0) {
       reserve(length_ + length);
       strncpy(text_ + length_, text, length);
@@ -43,7 +47,7 @@ public:
     }
     return *this;
   }
-  template <typename... Args> PebbleString & append_format(const char * format, Args... args) {
+  template <typename... Args> PbString & append_format(const char * format, Args... args) {
     int available = capacity_ - length_;
     int needed = snprintf(text_ + length_, capacity_ - length_, format, args...);
     if (needed > available) {
@@ -53,32 +57,32 @@ public:
     length_ += needed;
     return *this;
   }
-  PebbleString & append_time_format(size_t max, const char * format, const struct tm * tm) {
+  PbString & append_time_format(size_t max, const char * format, const struct tm * tm) {
     reserve(length_ + max + 1);
     length_ += strftime(text_ + length_, max, format, tm);
     return *this;
   }
-  PebbleString & assign(const PebbleString & text) {
+  PbString & assign(const PbString & text) {
     clear();
     append(text);
     return *this;
   }
-  PebbleString & assign(const char * text) {
+  PbString & assign(const char * text) {
     clear();
     append(text);
     return *this;
   }
-  PebbleString & assign(const char * text, size_t length) {
+  PbString & assign(const char * text, size_t length) {
     clear();
     append(text, length);
     return *this;
   }
-  template <typename... Args> PebbleString & assign_format(const char * format, Args... args) {
+  template <typename... Args> PbString & assign_format(const char * format, Args... args) {
     clear();
     append_format(format, args...);
     return *this;
   }
-  PebbleString & assign_time_format(size_t max, const char * format, const struct tm * tm) {
+  PbString & assign_time_format(size_t max, const char * format, const struct tm * tm) {
     clear();
     append_time_format(max, format, tm);
     return *this;
@@ -86,25 +90,25 @@ public:
   const char * c_str() const {
     return text_;
   }
-  PebbleString & clear() {
+  PbString & clear() {
     if (length_ != 0) {
       text_[0] = '\0';
       length_ = 0;
     }
     return *this;
   }
-  PebbleString clone() {
-    PebbleString text;
+  PbString clone() {
+    PbString text;
     text.append(*this);
     return text;
   }
-  int compare(const PebbleString & text) {
+  int compare(const PbString & text) {
     return strcmp(text_, text.text_);
   }
   int compare(const char * text) {
     return strcmp(text_, text);
   }
-  int compare_n(const PebbleString & text, size_t length) {
+  int compare_n(const PbString & text, size_t length) {
     return strncmp(text_, text.text_, length);
   }
   int compare_n(const char * text, size_t length) {
@@ -113,13 +117,13 @@ public:
   bool empty() const {
     return length_ == 0;
   }
-  bool equals(const PebbleString & text) {
+  bool equals(const PbString & text) {
     return strcmp(text_, text.text_) == 0;
   }
   bool equals(const char * text) {
     return strcmp(text_, text) == 0;
   }
-  bool equals_n(const PebbleString & text, size_t length) {
+  bool equals_n(const PbString & text, size_t length) {
     return strncmp(text_, text.text_, length) == 0;
   }
   bool equals_n(const char * text, size_t length) {
@@ -128,7 +132,7 @@ public:
   size_t length() const {
     return length_;
   }
-  PebbleString & reserve(size_t capacity) {
+  PbString & reserve(size_t capacity) {
     if (capacity > capacity_) {
       ASSERT(capacity <= max_length);
       if (capacity_ == 0) {
@@ -144,14 +148,14 @@ public:
     }
     return *this;
   }
-  void swap(PebbleString & text) {
+  void swap(PbString & text) {
     std::swap(text_, text.text_);
     std::swap(length_, text.length_);
     std::swap(capacity_, text.capacity_);
   }
   static const size_t max_length = 65535;
 private:
-  PebbleString(char * text, uint16_t length, uint16_t capacity) {
+  PbString(char * text, uint16_t length, uint16_t capacity) {
     init(text, length, capacity);
   }
   void init() {

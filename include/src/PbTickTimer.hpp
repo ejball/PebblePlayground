@@ -1,4 +1,8 @@
-class PebbleTickTimer {
+#ifndef PBCPP_H
+#error Include PbCpp.hpp instead.
+#endif
+
+class PbTickTimer {
 public:
   template <typename T> void subscribe(TimeUnits tick_units, T * handler) {
     if (handler != nullptr) {
@@ -15,7 +19,7 @@ public:
       *ptr = nullptr;
     }
   }
-  ~PebbleTickTimer() {
+  ~PbTickTimer() {
     unsubscribe();
   }
 private:

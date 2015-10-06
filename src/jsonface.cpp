@@ -1,56 +1,66 @@
-#include "../include/pebble.hpp"
+#include "../include/PbCpp.hpp"
 
-class OurApp : public PebbleApp {
+using namespace PbCpp;
+
+class OurApp : public PbApp {
 public:
   OurApp() {
-    tick_timer_.subscribe(SECOND_UNIT, this);
+    tick_timer_.subscribe(MINUTE_UNIT, this);
     window_.create()
       .handle_events(this)
       .handle_clicks(this);
     push_window_animated(window_);
   }
-  void on_window_load(PebbleWindow & window) {
+  void on_window_load(PbWindow & window) {
     text_layer_.create(window_.get_bounds())
-      .set_text_alignment(GTextAlignmentCenter);
+      .set_font(fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD))
+      .set_text_alignment(GTextAlignmentLeft);
     time_t now = time(nullptr);
     refresh_time(localtime(&now));
     window_.add_child(text_layer_);
   }
-  void on_window_unload(PebbleWindow & window) {
+  void on_window_unload(PbWindow & window) {
     text_layer_.destroy();
   }
   void on_tick(struct tm * tick_time, TimeUnits units_changed) {
     refresh_time(tick_time);
   }
-  void on_event_config(PebbleWindow & window, PebbleWindow::EventConfig<OurApp> & config) {
+  void on_event_config(PbWindow & window, PbWindow::EventConfig<OurApp> & config) {
     config.handle_load().handle_unload();
   }
-  void on_click_config(PebbleWindow & window, PebbleWindow::ClickConfig<OurApp> & config) {
+  void on_click_config(PbWindow & window, PbWindow::ClickConfig<OurApp> & config) {
     config.handle_single_click_select()
       .handle_single_click_up()
       .handle_single_click_down()
       .handle_single_click_back();
   }
-  void on_single_click_select(PebbleWindow & window, ClickRecognizerRef ref) {
+  void on_single_click_select(PbWindow & window, ClickRecognizerRef ref) {
     text_layer_.set_text("select");
   }
-  void on_single_click_up(PebbleWindow & window, ClickRecognizerRef ref) {
+  void on_single_click_up(PbWindow & window, ClickRecognizerRef ref) {
     text_layer_.set_text("up");
   }
-  void on_single_click_down(PebbleWindow & window, ClickRecognizerRef ref) {
+  void on_single_click_down(PbWindow & window, ClickRecognizerRef ref) {
     text_layer_.set_text("down");
   }
-  void on_single_click_back(PebbleWindow & window, ClickRecognizerRef ref) {
+  void on_single_click_back(PbWindow & window, ClickRecognizerRef ref) {
     text_layer_.set_text("back");
   }
 private:
-  void refresh_time(struct tm * tick_time) {
-    text_layer_.set_text(text_layer_text_.assign_time_format(20, "%F %T", tick_time).c_str());
+  void refresh_time(struct tm * time) {
+    if (clock_is_24h_style()) {
+      text_layer_text_.assign_format( "{\n  \"time\": \"%02d:%02d\"\n}", time->tm_hour, time->tm_min);
+    } else {
+      text_layer_text_.assign_format( "{\n  \"time\": \"%d:%02d %s\"\n}",
+        time->tm_hour > 12 ? time->tm_hour - 12 : time->tm_hour == 0 ? 12 : time->tm_hour,
+        time->tm_min, time->tm_hour >= 12 ? "pm" : "am");
+    }
+    text_layer_.set_text(text_layer_text_.c_str());
   }
-  PebbleTickTimer tick_timer_;
-  PebbleWindow window_;
-  PebbleTextLayer text_layer_;
-  PebbleString text_layer_text_;
+  PbTickTimer tick_timer_;
+  PbWindow window_;
+  PbTextLayer text_layer_;
+  PbString text_layer_text_;
 };
 
 extern "C" int main(void) {

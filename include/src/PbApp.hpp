@@ -1,4 +1,8 @@
-class PebbleApp {
+#ifndef PBCPP_H
+#error Include PbCpp.hpp instead.
+#endif
+
+class PbApp {
 public:
   template <typename TWindow> void push_window_animated(TWindow & window) {
     window_stack_push(window.get_handle(), true);
