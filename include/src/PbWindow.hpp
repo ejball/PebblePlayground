@@ -45,6 +45,9 @@ public:
   static PbWindow & from_handle(Window * handle) {
     return *reinterpret_cast<PbWindow *>(window_get_user_data(handle));
   }
+  template <typename T> static PbWindow & from_layer(T & layer) {
+    return from_handle(layer_get_window(layer.get_layer_handle()));
+  }
   template <typename T> class EventConfig {
   public:
     EventConfig() {
