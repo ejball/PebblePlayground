@@ -5,8 +5,7 @@
 class PbWindow : public PbLayer<PbWindow> {
 public:
   PbWindow()
-    : handle_(nullptr),
-    handlers_(nullptr) {
+    : handle_(nullptr) {
   }
   PbWindow & create() {
     destroy();
@@ -137,7 +136,6 @@ private:
     reinterpret_cast<T *>(pw.click_handlers_)->on_click_config(pw, config);
   }
   Window * handle_;
-  void * handlers_;
   void * event_handlers_;
   void * click_handlers_;
 };

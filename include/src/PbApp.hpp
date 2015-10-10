@@ -2,15 +2,25 @@
 #error Include PbCpp.hpp instead.
 #endif
 
-class PbApp {
+template <typename TDerived> class PbApp {
 public:
-  template <typename TWindow> void push_window_animated(TWindow & window) {
+  void push_window_animated(PbWindow & window) {
     window_stack_push(window.get_handle(), true);
   }
-  template <typename TWindow> void push_window_not_animated(TWindow & window) {
+  void push_window_not_animated(PbWindow & window) {
     window_stack_push(window.get_handle(), false);
   }
-  void event_loop() {
-    app_event_loop();
+  static TDerived & get_app() {
+    return *app_ptr_;
   }
+  static int main() {
+    app_ptr_ = new TDerived();
+    app_event_loop();
+    delete app_ptr_;
+    return 0;
+  }
+private:
+  static TDerived * app_ptr_;
 };
+
+template <typename TDerived> TDerived * PbApp<TDerived>::app_ptr_;

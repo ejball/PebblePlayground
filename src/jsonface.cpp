@@ -1,15 +1,20 @@
 #include "../include/PbCpp.hpp"
+#include "../include/PbCpp.cpp"
 
 using namespace PbCpp;
 
-class OurApp : public PbApp {
+class OurApp : public PbApp<OurApp> {
 public:
   OurApp() {
+    PB_LOG_DEBUG("App starting.");
     tick_timer_.subscribe(MINUTE_UNIT, this);
     window_.create()
       .handle_events(this)
       .handle_clicks(this);
     push_window_animated(window_);
+  }
+  ~OurApp() {
+    PB_LOG_DEBUG("App finishing.");
   }
   void on_window_load(PbWindow & window) {
     text_layer_.create(window_.get_bounds())
@@ -63,7 +68,6 @@ private:
   PbString text_layer_text_;
 };
 
-extern "C" int main(void) {
-  OurApp app;
-  app.event_loop();
+extern "C" int main() {
+  return OurApp::main();
 }

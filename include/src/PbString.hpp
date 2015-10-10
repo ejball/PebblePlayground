@@ -134,15 +134,15 @@ public:
   }
   PbString & reserve(size_t capacity) {
     if (capacity > capacity_) {
-      ASSERT(capacity <= max_length);
+      PB_ASSERT(capacity <= max_length);
       if (capacity_ == 0) {
         text_ = reinterpret_cast<char *>(malloc(capacity + 1));
-        ASSERT(text_ != nullptr);
+        PB_ASSERT(text_ != nullptr);
         text_[0] = '\0';
       }
       else {
         text_ = reinterpret_cast<char *>(realloc(text_, capacity + 1));
-        ASSERT(text_ != nullptr);
+        PB_ASSERT(text_ != nullptr);
       }
       capacity_ = static_cast<uint16_t>(capacity);
     }
