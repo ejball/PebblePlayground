@@ -20,6 +20,10 @@ public:
       handle_ = nullptr;
     }
   }
+  PbWindow & show() {
+    window_stack_push(handle_, true);
+    return *this;
+  }
   template <typename T> PbWindow & handle_events(T * handlers) {
     event_handlers_ = handlers;
     EventConfig<T> config;

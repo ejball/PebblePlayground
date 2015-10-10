@@ -4,8 +4,8 @@
 #define PBCPP_H
 
 extern "C" {
-#define _NEWLIB_ALLOCA_H
-#include <pebble.h>
+  #define _NEWLIB_ALLOCA_H
+  #include <pebble.h>
 }
 
 #include <algorithm>
@@ -22,14 +22,13 @@ extern "C" {
 #define PB_ASSERT(X) do { if (!(X)) { PB_LOG_ERROR("Assertion failure!"); PB_CRASH(); } } while(false)
 
 namespace PbCpp {
-
-#include "src/PbString.hpp"
-#include "src/PbTickTimer.hpp"
-#include "src/PbLayer.hpp"
-#include "src/PbWindow.hpp"
-#include "src/PbTextLayer.hpp"
-#include "src/PbApp.hpp"
-
+  #include "src/PbRect.hpp"
+  #include "src/PbString.hpp"
+  #include "src/PbTickTimer.hpp"
+  #include "src/PbLayer.hpp"
+  #include "src/PbWindow.hpp"
+  #include "src/PbTextLayer.hpp"
+  #include "src/PbApp.hpp"
 }
 
 #endif

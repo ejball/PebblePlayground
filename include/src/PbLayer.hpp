@@ -4,7 +4,7 @@
 
 template <typename TDerived> class PbLayer {
 public:
-  template <typename TLayer> TDerived & add_child(TLayer & layer) {
+  template <typename TLayer> TDerived & addChild(TLayer & layer) {
     TDerived & derived = static_cast<TDerived &>(*this);
     layer_add_child(derived.get_layer_handle(), layer.get_layer_handle());
     return derived;

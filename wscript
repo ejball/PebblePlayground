@@ -1,9 +1,3 @@
-#
-# This file is the default set of rules to compile a Pebble project.
-#
-# Feel free to customize this to your needs.
-#
-
 import os.path
 
 top = '.'
@@ -37,7 +31,7 @@ def build(ctx):
         ctx.set_env(ctx.all_envs[p])
         ctx.set_group(ctx.env.PLATFORM_NAME)
         app_elf='{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
-        ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c') + ctx.path.ant_glob('src/**/*.cpp'), 
+        ctx.pbl_program(source=ctx.path.ant_glob('src/**/*.c') + ctx.path.ant_glob('src/**/*.cpp'),
         includes=[],
         target=app_elf)
 

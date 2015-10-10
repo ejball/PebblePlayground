@@ -40,7 +40,7 @@ public:
     text_layer_set_size(handle_, max_size);
     return *this;
   }
-  PbTextLayer & set_text(const char * text) {
+  PbTextLayer & text(const char * text) {
     text_layer_set_text(handle_, text);
     return *this;
   }
