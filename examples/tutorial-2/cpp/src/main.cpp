@@ -36,7 +36,7 @@ public:
       .text("00:00");
 
     // Create GFont
-    _timeFont.loadCustomFont(RESOURCE_ID_FONT_PERFECT_DOS_48);
+    _timeFont.load(RESOURCE_ID_FONT_PERFECT_DOS_48);
 
     // Apply to TextLayer
     _timeLayer.font(_timeFont)
@@ -75,7 +75,7 @@ private:
   PbBitmapLayer _backgroundLayer;
   PbBitmap _backgroundBitmap;
   PbTextLayer _timeLayer;
-  PbFont _timeFont;
+  PbCustomFont _timeFont;
   PbString _timeText;
 };
 

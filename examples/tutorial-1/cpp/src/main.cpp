@@ -30,7 +30,7 @@ public:
       .text("00:00");
 
     // Improve the layout to be more like a watchface
-    _timeLayer.font(fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD))
+    _timeLayer.font(_timeFont.load(FONT_KEY_BITHAM_42_BOLD))
       .textAlignment(GTextAlignmentCenter);
 
     // Add it as a child layer to the Window's root layer
@@ -65,6 +65,7 @@ private:
   PbWindow _window;
   PbTextLayer _timeLayer;
   PbString _timeText;
+  PbSystemFont _timeFont;
 };
 
 extern "C" int main() {
