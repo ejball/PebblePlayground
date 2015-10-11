@@ -16,6 +16,7 @@ public:
   PbFont & loadCustomFont(uint32_t resourceId) {
     destroy();
     _handle = fonts_load_custom_font(resource_get_handle(resourceId));
+    _custom = true;
     return *this;
   }
   void destroy() {
