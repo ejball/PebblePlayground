@@ -28,6 +28,8 @@ namespace PbCpp {
   #include "src/PbString.h"
   #include "src/PbBitmap.h"
   #include "src/PbFont.h"
+  #include "src/PbSystemFont.h"
+  #include "src/PbCustomFont.h"
   #include "src/PbLayer.h"
   #include "src/PbWindow.h"
   #include "src/PbBitmapLayer.h"
