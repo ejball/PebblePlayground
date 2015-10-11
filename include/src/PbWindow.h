@@ -37,10 +37,10 @@ public:
     window_set_click_config_provider(_handle, &click_config_provider<T>);
     return *this;
   }*/
-  Window * get_handle() {
+  Window * handle() {
     return _handle;
   }
-  Layer * get_layer_handle() {
+  Layer * layerHandle() {
     return window_get_root_layer(_handle);
   }
   ~PbWindow() {
@@ -49,8 +49,8 @@ public:
   static PbWindow & fromHandle(Window * handle) {
     return *reinterpret_cast<PbWindow *>(window_get_user_data(handle));
   }
-  template <typename T> static PbWindow & from_layer(T & layer) {
-    return fromHandle(layer_get_window(layer.get_layer_handle()));
+  template <typename T> static PbWindow & fromLayer(T & layer) {
+    return fromHandle(layer_get_window(layer.layerHandle()));
   }
   template <typename T> class EventConfig {
   public:

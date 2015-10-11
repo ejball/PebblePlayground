@@ -26,8 +26,11 @@ namespace PbCpp {
   #include "src/PbDateTime.h"
   #include "src/PbRect.h"
   #include "src/PbString.h"
+  #include "src/PbBitmap.h"
+  #include "src/PbFont.h"
   #include "src/PbLayer.h"
   #include "src/PbWindow.h"
+  #include "src/PbBitmapLayer.h"
   #include "src/PbTextLayer.h"
   #include "src/PbApp.h"
 }

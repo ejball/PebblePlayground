@@ -18,18 +18,15 @@ public:
       _handle = nullptr;
     }
   }
-  GSize get_content_size() {
+  GSize contentSize() {
     return text_layer_get_content_size(_handle);
-  }
-  const char * get_text() {
-    return text_layer_get_text(_handle);
   }
   PbTextLayer & backgroundColor(GColor color) {
     text_layer_set_background_color(_handle, color);
     return *this;
   }
-  PbTextLayer & font(GFont font) {
-    text_layer_set_font(_handle, font);
+  PbTextLayer & font(PbFont & font) {
+    text_layer_set_font(_handle, font.handle());
     return *this;
   }
   PbTextLayer & overflowMode(GTextOverflowMode line_mode) {
@@ -52,10 +49,10 @@ public:
     text_layer_set_text_color(_handle, color);
     return *this;
   }
-  TextLayer * get_handle() {
+  TextLayer * handle() {
     return _handle;
   }
-  Layer * get_layer_handle() {
+  Layer * layerHandle() {
     return text_layer_get_layer(_handle);
   }
   ~PbTextLayer() {
