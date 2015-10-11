@@ -1,82 +1,72 @@
-#include <PbCpp.hpp>
+#include "../../../include/PbCpp.cpp"
 
-static Window *s_main_window;
-static TextLayer *s_time_layer;
+using namespace PbCpp;
 
-static void update_time() {
-  // Get a tm structure
-  time_t temp = time(NULL);
-  struct tm *tick_time = localtime(&temp);
+class App : public PbApp<App> {
+public:
+  App() {
+    // Create main Window element and assign to pointer
+    _window.create();
 
-  // Create a long-lived buffer
-  static char buffer[] = "00:00";
+    // Set handlers to manage the elements inside the Window
+    _window.eventHandlers(this);
 
-  // Write the current hours and minutes into the buffer
-  if(clock_is_24h_style() == true) {
-    //Use 2h hour format
-    strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
-  } else {
-    //Use 12 hour format
-    strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
+    // Show the Window on the watch, with animated=true
+    _window.show();
+
+    // Register with TickTimerService
+    tickTimerHandler(MINUTE_UNIT, this);
   }
 
-  // Display this time on the TextLayer
-  text_layer_set_text(s_time_layer, buffer);
-}
+  void onEventConfig(PbWindow & window, PbWindow::EventConfig<App> & config) {
+    config.load();
+  }
 
-static void main_window_load(Window *window) {
-  // Create time TextLayer
-  s_time_layer = text_layer_create(GRect(0, 55, 144, 50));
-  text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_text_color(s_time_layer, GColorBlack);
-  text_layer_set_text(s_time_layer, "00:00");
+  void onWindowLoad(PbWindow & window) {
+    // Create time TextLayer
+    _timeLayer.create(PbRect(0, 55, 144, 50))
+      .backgroundColor(GColorClear)
+      .textColor(GColorBlack)
+      .text("00:00");
 
-  // Improve the layout to be more like a watchface
-  text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
-  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
+    // Improve the layout to be more like a watchface
+    _timeLayer.font(fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD))
+      .textAlignment(GTextAlignmentCenter);
 
-  // Add it as a child layer to the Window's root layer
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
+    // Add it as a child layer to the Window's root layer
+    _window.addChild(_timeLayer);
 
-  // Make sure the time is displayed from the start
-  update_time();
-}
+    // Make sure the time is displayed from the start
+    updateTime();
+  }
 
-static void main_window_unload(Window *window) {
-  // Destroy TextLayer
-  text_layer_destroy(s_time_layer);
-}
+  void onTick(const PbDateTimeInfo & dateTimeInfo, TimeUnits unitsChanged) {
+    updateTime();
+  }
 
-static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-  update_time();
-}
+private:
+  void updateTime() {
+    // Get the current time
+    PbDateTime now = PbDateTime::now();
 
-static void init() {
-  // Create main Window element and assign to pointer
-  s_main_window = window_create();
+    // Write the current hours and minutes into the buffer
+    if (clock_is_24h_style()) {
+      // Use 2h hour format
+      _timeText.assignDateTimeFormat(sizeof("00:00"), "%H:%M", now.localInfo());
+    } else {
+      // Use 12 hour format
+      _timeText.assignDateTimeFormat(sizeof("00:00"), "%I:%M", now.localInfo());
+    }
 
-  // Set handlers to manage the elements inside the Window
-  WindowHandlers window_handlers;
-  window_handlers.load = main_window_load;
-  window_handlers.unload = main_window_unload;
-  window_handlers.appear = nullptr;
-  window_handlers.disappear = nullptr;
-  window_set_window_handlers(s_main_window, window_handlers);
+    // Display this time on the TextLayer
+    _timeLayer.text(_timeText.c_str());
+  }
 
-  // Show the Window on the watch, with animated=true
-  window_stack_push(s_main_window, true);
+  PbWindow _window;
+  PbTextLayer _timeLayer;
+  PbString _timeText;
+};
 
-  // Register with TickTimerService
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-}
-
-static void deinit() {
-  // Destroy Window
-  window_destroy(s_main_window);
-}
-
-int main(void) {
-  init();
-  app_event_loop();
-  deinit();
+extern "C" int main() {
+  return App::main();
 }

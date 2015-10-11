@@ -22,13 +22,14 @@ extern "C" {
 #define PB_ASSERT(X) do { if (!(X)) { PB_LOG_ERROR("Assertion failure!"); PB_CRASH(); } } while(false)
 
 namespace PbCpp {
-  #include "src/PbRect.hpp"
-  #include "src/PbString.hpp"
-  #include "src/PbTickTimer.hpp"
-  #include "src/PbLayer.hpp"
-  #include "src/PbWindow.hpp"
-  #include "src/PbTextLayer.hpp"
-  #include "src/PbApp.hpp"
+  #include "src/PbDateTimeInfo.h"
+  #include "src/PbDateTime.h"
+  #include "src/PbRect.h"
+  #include "src/PbString.h"
+  #include "src/PbLayer.h"
+  #include "src/PbWindow.h"
+  #include "src/PbTextLayer.h"
+  #include "src/PbApp.h"
 }
 
 #endif
