@@ -29,7 +29,6 @@ public:
     EventConfig<T> config;
     handlers->onEventConfig(*this, config);
     window_set_window_handlers(_handle, config._windowHandlers);
-    PB_LOG_DEBUG("%p %p", config._windowHandlers.load, config._windowHandlers.unload);
     return *this;
   }
 /*  template <typename T> PbWindow & _handleclicks(T * handlers) {
@@ -78,7 +77,6 @@ public:
     }
   private:
     static void loadHandler(Window * window) {
-      PB_LOG_DEBUG("loadHandler");
       PbWindow & pw = fromHandle(window);
       reinterpret_cast<T *>(pw._eventHandlers)->onWindowLoad(pw);
     }
