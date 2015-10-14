@@ -30,11 +30,13 @@ namespace PbCpp {
   #include "src/PbFont.h"
   #include "src/PbSystemFont.h"
   #include "src/PbCustomFont.h"
-  #include "src/PbLayer.h"
+  #include "src/PbHasLayer.h"
   #include "src/PbWindow.h"
   #include "src/PbBitmapLayer.h"
   #include "src/PbTextLayer.h"
-  #include "src/PbApp.h"
+  #include "src/PbTickTimer.h"
+  #include "src/PbAppMessages.h"
+  #include "src/PbMain.h"
 }
 
 #endif

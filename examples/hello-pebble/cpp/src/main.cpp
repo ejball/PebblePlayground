@@ -2,11 +2,14 @@
 
 using namespace PbCpp;
 
-class App : public PbApp<App> {
+class App {
 public:
   App() {
-    _textLayer.create(PbRect(0, 0, 144, 40)).text("Hello, Pebble!");
-    _window.create().addChild(_textLayer).show();
+    _textLayer.create(PbRect(0, 0, 144, 40))
+      .text("Hello, Pebble!");
+    _window.create()
+      .addChild(_textLayer)
+      .show();
   }
 private:
   PbWindow _window;
@@ -14,5 +17,5 @@ private:
 };
 
 extern "C" int main() {
-  return App::main();
+  return PbMain<App>::run();
 }

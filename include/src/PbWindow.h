@@ -1,100 +1,119 @@
 #ifndef PBCPP_H
-#error Include PbCpp.hpp instead.
+#error Include PbCpp.h instead.
 #endif
 
-class PbWindow : public PbLayer<PbWindow> {
+class PbWindow : public PbHasLayer<PbWindow> {
 public:
   PbWindow()
     : _handle(nullptr) {
   }
+
   PbWindow & create() {
     destroy();
     _handle = window_create();
-    window_set_user_data(_handle, this);
+    //window_set_user_data(_handle, this);
     window_set_fullscreen(_handle, true);
     return *this;
   }
+
   void destroy() {
     if (_handle) {
       window_destroy(_handle);
       _handle = nullptr;
     }
   }
+
   PbWindow & show() {
     window_stack_push(_handle, true);
     return *this;
   }
-  template <typename T> PbWindow & eventHandlers(T * handlers) {
-    _eventHandlers = handlers;
-    EventConfig<T> config;
-    handlers->onEventConfig(*this, config);
-    window_set_window_handlers(_handle, config._windowHandlers);
+
+  template <typename T> PbWindow & subscribe(T * handlers) {
+    Subscriber<T> subscriber;
+    if (handlers) {
+      handlers->onWindowSubscribe(subscriber);
+    }
+    window_set_user_data(_handle, handlers);
+    window_set_window_handlers(_handle, subscriber._windowHandlers);
     return *this;
   }
+
 /*  template <typename T> PbWindow & _handleclicks(T * handlers) {
     click_handlers_ = handlers;
     window_set_click_config_provider(_handle, &click_config_provider<T>);
     return *this;
   }*/
+
   Window * handle() {
     return _handle;
   }
+
   Layer * layerHandle() {
     return window_get_root_layer(_handle);
   }
+
   ~PbWindow() {
     destroy();
   }
-  static PbWindow & fromHandle(Window * handle) {
+
+/*  static PbWindow & fromHandle(Window * handle) {
     return *reinterpret_cast<PbWindow *>(window_get_user_data(handle));
   }
+
   template <typename T> static PbWindow & fromLayer(T & layer) {
     return fromHandle(layer_get_window(layer.layerHandle()));
-  }
-  template <typename T> class EventConfig {
+  }*/
+
+  template <typename T> class Subscriber {
   public:
-    EventConfig() {
+    Subscriber() {
       _windowHandlers.load = nullptr;
       _windowHandlers.unload = nullptr;
       _windowHandlers.appear = nullptr;
       _windowHandlers.disappear = nullptr;
     }
-    EventConfig<T> & load() {
-      _windowHandlers.load = &loadHandler;
+
+    Subscriber<T> & load() {
+      _windowHandlers.load = &handleLoad;
       return *this;
     }
-    EventConfig<T> & unload() {
-      _windowHandlers.unload = &unloadHandler;
+
+    Subscriber<T> & unload() {
+      _windowHandlers.unload = &handleUnload;
       return *this;
     }
-    EventConfig<T> & appear() {
-      _windowHandlers.appear = &appearHandler;
+
+    Subscriber<T> & appear() {
+      _windowHandlers.appear = &handleAppear;
       return *this;
     }
-    EventConfig<T> & disappear() {
-      _windowHandlers.disappear = &disappearHandler;
+
+    Subscriber<T> & disappear() {
+      _windowHandlers.disappear = &handleDisappaer;
       return *this;
     }
+
   private:
-    static void loadHandler(Window * window) {
-      PbWindow & pw = fromHandle(window);
-      reinterpret_cast<T *>(pw._eventHandlers)->onWindowLoad(pw);
+    static void handleLoad(Window * window) {
+      reinterpret_cast<T *>(window_get_user_data(window))->onWindowLoad();
     }
-    static void unloadHandler(Window * window) {
-      PbWindow & pw = fromHandle(window);
-      reinterpret_cast<T *>(pw._eventHandlers)->onWindowUnload(pw);
+
+    static void handleUnload(Window * window) {
+      reinterpret_cast<T *>(window_get_user_data(window))->onWindowUnload();
     }
-    static void appearHandler(Window * window) {
-      PbWindow & pw = fromHandle(window);
-      reinterpret_cast<T *>(pw._eventHandlers)->onWindowAppear(pw);
+
+    static void handleAppear(Window * window) {
+      reinterpret_cast<T *>(window_get_user_data(window))->onWindowAppear();
     }
-    static void disappearHandler(Window * window) {
-      PbWindow & pw = fromHandle(window);
-      reinterpret_cast<T *>(pw._eventHandlers)->onWindowDisappear(pw);
+
+    static void handleDisappaer(Window * window) {
+      reinterpret_cast<T *>(window_get_user_data(window))->onWindowDisappear();
     }
+
     friend PbWindow;
     WindowHandlers _windowHandlers;
   };
+
 /*  template <typename T> class ClickConfig {
   public:
     ClickConfig() {
@@ -139,7 +158,8 @@ private:
     ClickConfig<T> config;
     reinterpret_cast<T *>(pw.click_handlers_)->on_click_config(pw, config);
   }*/
+
   Window * _handle;
-  void * _eventHandlers;
+  //void * _eventHandlers;
   //void * click_handlers_;
 };

@@ -1,5 +1,5 @@
 #ifndef PBCPP_H
-#error Include PbCpp.hpp instead.
+#error Include PbCpp.h instead.
 #endif
 
 struct PbRect : GRect {

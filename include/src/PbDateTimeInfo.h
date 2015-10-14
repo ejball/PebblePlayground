@@ -1,10 +1,46 @@
 #ifndef PBCPP_H
-#error Include PbCpp.hpp instead.
+#error Include PbCpp.h instead.
 #endif
 
 class PbDateTimeInfo : public tm {
 public:
   PbDateTimeInfo(const tm & tm) {
     memcpy(this, &tm, sizeof(tm));
+  }
+
+  int second() const {
+    return tm_sec;
+  }
+
+  int minute() const {
+    return tm_min;
+  }
+
+  int hour() const {
+    return tm_hour;
+  }
+
+  int hour12() const {
+    return tm_hour > 12 ? tm_hour - 12 : tm_hour != 0 ? tm_hour : 12;
+  }
+
+  int day() const {
+    return tm_mday;
+  }
+
+  int month() const {
+    return tm_mon + 1;
+  }
+
+  int year() const {
+    return tm_year + 1900;
+  }
+
+  int weekday() const {
+    return tm_wday + 1;
+  }
+
+  int yearday() const {
+    return tm_yday + 1;
   }
 };

@@ -2,27 +2,27 @@
 
 using namespace PbCpp;
 
-class App : public PbApp<App> {
+class App {
 public:
   App() {
     // Create main Window element and assign to pointer
     _window.create();
 
     // Set handlers to manage the elements inside the Window
-    _window.eventHandlers(this);
+    _window.subscribe(this);
 
     // Show the Window on the watch, with animated=true
     _window.show();
 
     // Register with TickTimerService
-    tickTimerHandler(MINUTE_UNIT, this);
+    _tickTimer.subscribe(MINUTE_UNIT, this);
   }
 
-  void onEventConfig(PbWindow & window, PbWindow::EventConfig<App> & config) {
-    config.load();
+  void onWindowSubscribe(PbWindow::Subscriber<App> & subscriber) {
+    subscriber.load();
   }
 
-  void onWindowLoad(PbWindow & window) {
+  void onWindowLoad() {
     // Create time TextLayer
     _timeLayer.create(PbRect(0, 55, 144, 50))
       .backgroundColor(GColorClear)
@@ -62,6 +62,7 @@ private:
     _timeLayer.text(_timeText.c_str());
   }
 
+  PbTickTimer _tickTimer;
   PbWindow _window;
   PbTextLayer _timeLayer;
   PbString _timeText;
@@ -69,5 +70,5 @@ private:
 };
 
 extern "C" int main() {
-  return App::main();
+  return PbMain<App>::run();
 }
