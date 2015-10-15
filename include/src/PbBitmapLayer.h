@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbBitmapLayer : public PbHasLayer<PbBitmapLayer> {
+class PbBitmapLayer : public PbHasLayer<PbBitmapLayer>, public PbNoncopyable {
 public:
   PbBitmapLayer()
     : _handle(nullptr) {

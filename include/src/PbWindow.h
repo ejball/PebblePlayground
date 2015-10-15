@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbWindow : public PbWindowRef {
+class PbWindow : public PbWindowRef, public PbNoncopyable {
 public:
   PbWindow() {}
 

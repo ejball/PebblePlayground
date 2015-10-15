@@ -15,6 +15,8 @@ public:
     return *_app;
   }
 
+  PbMain() = delete;
+
 private:
   static TApp * _app;
 };

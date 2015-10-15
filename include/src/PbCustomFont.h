@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbCustomFont : public PbFontRef {
+class PbCustomFont : public PbFontRef, public PbNoncopyable {
 public:
   PbCustomFont() {}
 

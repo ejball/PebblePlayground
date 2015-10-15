@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbTickTimer {
+class PbTickTimer : public PbNoncopyable {
 public:
   template <typename T> void subscribe(TimeUnits tickUnits, T * handler) {
     if (handler) {

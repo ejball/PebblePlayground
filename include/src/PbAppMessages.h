@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbAppMessages {
+class PbAppMessages : public PbNoncopyable {
 public:
   template <typename T> PbAppMessages & subscribe(T * handlers) {
     Subscriber<T> subscriber;

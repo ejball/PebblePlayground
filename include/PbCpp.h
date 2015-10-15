@@ -22,6 +22,7 @@ extern "C" {
 #define PB_ASSERT(X) do { if (!(X)) { PB_LOG_ERROR("Assertion failure!"); PB_CRASH(); } } while(false)
 
 namespace PbCpp {
+  #include "src/PbNoncopyable.h"
   #include "src/PbDateTimeInfo.h"
   #include "src/PbDateTime.h"
   #include "src/PbRect.h"

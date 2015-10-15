@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbBitmap : public PbBitmapRef {
+class PbBitmap : public PbBitmapRef, public PbNoncopyable {
 public:
   PbBitmap() {}
 

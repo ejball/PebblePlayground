@@ -2,7 +2,7 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbTextLayer : public PbTextLayerRef {
+class PbTextLayer : public PbTextLayerRef, public PbNoncopyable {
 public:
   PbTextLayer() {}
 
