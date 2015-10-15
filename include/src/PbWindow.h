@@ -135,6 +135,5 @@ private:
     reinterpret_cast<T *>(pw.click_handlers_)->on_click_config(pw, config);
   }*/
 
-  Window * _handle;
   //void * click_handlers_;
 };

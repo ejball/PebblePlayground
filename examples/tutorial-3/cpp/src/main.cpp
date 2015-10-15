@@ -2,8 +2,8 @@
 
 using namespace PbCpp;
 
-#define KEY_TEMPERATURE 0
-#define KEY_CONDITIONS 1
+static const uint32_t KEY_TEMPERATURE = 0;
+static const uint32_t KEY_CONDITIONS = 1;
 
 class App {
 public:
