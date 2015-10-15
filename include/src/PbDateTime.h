@@ -4,7 +4,11 @@
 
 class PbDateTime {
 public:
-  PbDateTime(size_t c_time = 0)
+  static PbDateTime now() {
+    return PbDateTime(time(nullptr));
+  }
+
+  explicit PbDateTime(size_t c_time = 0)
     : _c_time(c_time) {}
 
   time_t c_time() const {
@@ -13,10 +17,6 @@ public:
 
   PbDateTimeInfo localInfo() const {
     return PbDateTimeInfo(*localtime(&_c_time));
-  }
-
-  static PbDateTime now() {
-    return PbDateTime(time(nullptr));
   }
 
 private:

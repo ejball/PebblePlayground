@@ -2,11 +2,12 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbBitmap {
+class PbBitmap : public PbBitmapRef {
 public:
-  PbBitmap()
-    : _handle(nullptr) {
-  }
+  PbBitmap() {}
+
+  PbBitmap(GBitmap * handle)
+    : PbBitmapRef(handle) {}
 
   PbBitmap & createWithResource(uint32_t resourceId) {
     destroy();
@@ -22,14 +23,7 @@ public:
     }
   }
 
-  GBitmap * handle() {
-    return _handle;
-  }
-
   ~PbBitmap() {
     destroy();
   }
-
-private:
-  GBitmap * _handle;
 };

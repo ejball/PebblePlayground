@@ -8,32 +8,32 @@ public:
     memcpy(this, &tm, sizeof(tm));
   }
 
-  int second() const {
-    return tm_sec;
-  }
-
-  int minute() const {
-    return tm_min;
-  }
-
-  int hour() const {
-    return tm_hour;
-  }
-
-  int hour12() const {
-    return tm_hour > 12 ? tm_hour - 12 : tm_hour != 0 ? tm_hour : 12;
-  }
-
-  int day() const {
-    return tm_mday;
+  int year() const {
+    return tm_year + 1900;
   }
 
   int month() const {
     return tm_mon + 1;
   }
 
-  int year() const {
-    return tm_year + 1900;
+  int day() const {
+    return tm_mday;
+  }
+
+  int hour() const {
+    return tm_hour;
+  }
+
+  int minute() const {
+    return tm_min;
+  }
+
+  int second() const {
+    return tm_sec;
+  }
+
+  int hour12() const {
+    return tm_hour > 12 ? tm_hour - 12 : tm_hour != 0 ? tm_hour : 12;
   }
 
   int weekday() const {

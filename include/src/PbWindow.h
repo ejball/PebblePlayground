@@ -2,16 +2,13 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbWindow : public PbHasLayer<PbWindow> {
+class PbWindow : public PbWindowRef {
 public:
-  PbWindow()
-    : _handle(nullptr) {
-  }
+  PbWindow() {}
 
   PbWindow & create() {
     destroy();
     _handle = window_create();
-    //window_set_user_data(_handle, this);
     window_set_fullscreen(_handle, true);
     return *this;
   }
@@ -21,11 +18,6 @@ public:
       window_destroy(_handle);
       _handle = nullptr;
     }
-  }
-
-  PbWindow & show() {
-    window_stack_push(_handle, true);
-    return *this;
   }
 
   template <typename T> PbWindow & subscribe(T * handlers) {
@@ -44,25 +36,9 @@ public:
     return *this;
   }*/
 
-  Window * handle() {
-    return _handle;
-  }
-
-  PbLayerRef layer() {
-    return PbLayerRef(window_get_root_layer(_handle));
-  }
-
   ~PbWindow() {
     destroy();
   }
-
-/*  static PbWindow & fromHandle(Window * handle) {
-    return *reinterpret_cast<PbWindow *>(window_get_user_data(handle));
-  }
-
-  template <typename T> static PbWindow & fromLayer(T & layer) {
-    return fromHandle(layer_get_window(layer.layerHandle()));
-  }*/
 
   template <typename T> class Subscriber {
   public:
@@ -160,6 +136,5 @@ private:
   }*/
 
   Window * _handle;
-  //void * _eventHandlers;
   //void * click_handlers_;
 };
