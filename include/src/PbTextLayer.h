@@ -6,9 +6,6 @@ class PbTextLayer : public PbTextLayerRef {
 public:
   PbTextLayer() {}
 
-  PbTextLayer(TextLayer * handle)
-    : PbTextLayerRef(handle) {}
-
   PbTextLayer & create(PbRect frame) {
     destroy();
     _handle = text_layer_create(frame);

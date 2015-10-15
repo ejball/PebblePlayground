@@ -6,9 +6,6 @@ class PbBitmap : public PbBitmapRef {
 public:
   PbBitmap() {}
 
-  PbBitmap(GBitmap * handle)
-    : PbBitmapRef(handle) {}
-
   PbBitmap & createWithResource(uint32_t resourceId) {
     destroy();
     _handle = gbitmap_create_with_resource(resourceId);

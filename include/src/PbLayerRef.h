@@ -6,7 +6,7 @@ class PbLayerRef : public PbHandleRef<Layer *> {
 public:
   PbLayerRef() {}
 
-  PbLayerRef(Layer * handle)
+  explicit PbLayerRef(Layer * handle)
     : PbHandleRef(handle) {}
 
   GRect bounds() {

@@ -6,6 +6,6 @@ class PbBitmapRef : public PbHandleRef<GBitmap *> {
 public:
   PbBitmapRef() {}
 
-  PbBitmapRef(GBitmap * handle)
+  explicit PbBitmapRef(GBitmap * handle)
     : PbHandleRef(handle) {}
 };

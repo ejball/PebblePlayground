@@ -6,7 +6,7 @@ class PbWindowRef : public PbHandleRef<Window *>, public PbHasLayer<PbWindowRef>
 public:
   PbWindowRef() {}
 
-  PbWindowRef(Window * handle)
+  explicit PbWindowRef(Window * handle)
     : PbHandleRef(handle) {}
 
   PbWindowRef & show() {

@@ -6,7 +6,7 @@ class PbTextLayerRef : public PbHandleRef<TextLayer *>, public PbHasLayer<PbText
 public:
   PbTextLayerRef() {}
 
-  PbTextLayerRef(TextLayer * handle)
+  explicit PbTextLayerRef(TextLayer * handle)
     : PbHandleRef(handle) {}
 
   GSize contentSize() {
