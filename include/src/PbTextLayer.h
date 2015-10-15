@@ -30,7 +30,7 @@ public:
     return *this;
   }
 
-  PbTextLayer & font(PbFont & font) {
+  PbTextLayer & font(PbFontRef font) {
     text_layer_set_font(_handle, font.handle());
     return *this;
   }

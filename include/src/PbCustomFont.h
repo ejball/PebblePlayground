@@ -2,23 +2,24 @@
 #error Include PbCpp.h instead.
 #endif
 
-class PbCustomFont : public PbFont {
+class PbCustomFont : public PbFontRef {
 public:
   PbCustomFont() {}
 
   PbCustomFont & load(uint32_t resourceId) {
-    destroy();
-    attach(fonts_load_custom_font(resource_get_handle(resourceId)));
+    unload();
+    _handle = fonts_load_custom_font(resource_get_handle(resourceId));
     return *this;
   }
 
-  void destroy() {
-    if (handle()) {
-      fonts_unload_custom_font(handle());
+  void unload() {
+    if (_handle) {
+      fonts_unload_custom_font(_handle);
+      _handle = nullptr;
     }
   }
 
   ~PbCustomFont() {
-    destroy();
+    unload();
   }
 };
