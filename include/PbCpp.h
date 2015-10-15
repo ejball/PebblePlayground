@@ -30,6 +30,7 @@ namespace PbCpp {
   #include "src/PbBitmap.h"
   #include "src/PbFontRef.h"
   #include "src/PbCustomFont.h"
+  #include "src/PbLayerRef.h"
   #include "src/PbHasLayer.h"
   #include "src/PbWindow.h"
   #include "src/PbBitmapLayer.h"

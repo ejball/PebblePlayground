@@ -64,8 +64,8 @@ public:
     return _handle;
   }
 
-  Layer * layerHandle() {
-    return text_layer_get_layer(_handle);
+  PbLayerRef layer() {
+    return PbLayerRef(text_layer_get_layer(_handle));
   }
 
   ~PbTextLayer() {

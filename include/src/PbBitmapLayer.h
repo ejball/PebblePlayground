@@ -45,8 +45,8 @@ public:
     return _handle;
   }
 
-  Layer * layerHandle() {
-    return bitmap_layer_get_layer(_handle);
+  PbLayerRef layer() {
+    return PbLayerRef(bitmap_layer_get_layer(_handle));
   }
 
   ~PbBitmapLayer() {

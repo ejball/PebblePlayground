@@ -48,8 +48,8 @@ public:
     return _handle;
   }
 
-  Layer * layerHandle() {
-    return window_get_root_layer(_handle);
+  PbLayerRef layer() {
+    return PbLayerRef(window_get_root_layer(_handle));
   }
 
   ~PbWindow() {
