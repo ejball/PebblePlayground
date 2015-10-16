@@ -17,9 +17,24 @@ public:
     return *this;
   }
 
-  PbAppMessages & start() {
+  PbAppMessages & open() {
     app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
     return *this;
+  }
+
+  PbDictionaryIteratorRef beginOutbox() {
+    AppMessageResult result;
+    return beginOutbox(result);
+  }
+
+  PbDictionaryIteratorRef beginOutbox(AppMessageResult & result) {
+    DictionaryIterator * iterator;
+    result = app_message_outbox_begin(&iterator);
+    return PbDictionaryIteratorRef(iterator);
+  }
+
+  AppMessageResult sendOutbox() {
+    return app_message_outbox_send();
   }
 
   template <typename T> class Subscriber {

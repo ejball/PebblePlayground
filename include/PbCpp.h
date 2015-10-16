@@ -6,6 +6,7 @@
 extern "C" {
   #define _NEWLIB_ALLOCA_H
   #include <pebble.h>
+  #undef open
 }
 
 #include <algorithm>

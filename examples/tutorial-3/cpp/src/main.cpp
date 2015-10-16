@@ -24,7 +24,7 @@ public:
     _appMessages.subscribe(this);
 
     // Open AppMessage
-    _appMessages.start();
+    _appMessages.open();
   }
 
   void onWindowSubscribe(PbWindow::Subscriber<App> & subscriber) {
@@ -118,14 +118,13 @@ public:
     // Get weather update every 30 minutes
     if (dateTimeInfo.minute() % 30 == 0) {
       // Begin dictionary
-      DictionaryIterator *iter;
-      app_message_outbox_begin(&iter);
+      auto iter = _appMessages.beginOutbox();
 
       // Add a key-value pair
-      dict_write_uint8(iter, 0, 0);
+      iter.writeUInt8(0, 0);
 
       // Send the message!
-      app_message_outbox_send();
+      _appMessages.sendOutbox();
     }
   }
 
