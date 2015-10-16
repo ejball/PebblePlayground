@@ -74,31 +74,31 @@ public:
     subscriber.inboxReceived().inboxDropped().outboxSent().outboxFailed();
   }
 
-  void onInboxReceived(DictionaryIterator * iterator) {
+  void onInboxReceived(PbDictionaryIteratorRef iterator) {
     // Store incoming information
     PbString temperature;
     PbString conditions;
 
     // Read first item
-    Tuple * t = dict_read_first(iterator);
+    auto t = iterator.readFirst();
 
     // For all items
-    while (t) {
+    while (t.handle()) {
       // Which key was received?
-      switch (t->key) {
+      switch (t.key()) {
       case KEY_TEMPERATURE:
-        temperature.assignFormat("%dC", static_cast<int>(t->value->int32));
+        temperature.assignFormat("%dC", static_cast<int>(t.int32()));
         break;
       case KEY_CONDITIONS:
-        conditions.assign(t->value->cstring);
+        conditions.assign(t.c_str());
         break;
       default:
-        PB_LOG_ERROR("Key %d not recognized!", static_cast<int>(t->key));
+        PB_LOG_ERROR("Key %d not recognized!", static_cast<int>(t.key()));
         break;
       }
 
       // Look for next item
-      t = dict_read_next(iterator);
+      t = iterator.readNext();
     }
 
     // Assemble full string and display
@@ -110,11 +110,11 @@ public:
     PB_LOG_ERROR("Message dropped!");
   }
 
-  void onOutboxFailed(DictionaryIterator * iterator, AppMessageResult reason) {
+  void onOutboxFailed(PbDictionaryIteratorRef iterator, AppMessageResult reason) {
     PB_LOG_ERROR("Outbox send failed!");
   }
 
-  void onOutboxSent(DictionaryIterator * iterator) {
+  void onOutboxSent(PbDictionaryIteratorRef iterator) {
     PB_LOG_ERROR("Outbox send success!");
   }
 

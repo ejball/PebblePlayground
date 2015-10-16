@@ -53,7 +53,7 @@ public:
 
   private:
     static void handleInboxReceived(DictionaryIterator * iterator, void * context) {
-      reinterpret_cast<T *>(context)->onInboxReceived(iterator);
+      reinterpret_cast<T *>(context)->onInboxReceived(PbDictionaryIteratorRef(iterator));
     }
 
     static void handleInboxDropped(AppMessageResult reason, void * context) {
@@ -61,11 +61,11 @@ public:
     }
 
     static void handleOutboxSent(DictionaryIterator * iterator, void * context) {
-      reinterpret_cast<T *>(context)->onOutboxSent(iterator);
+      reinterpret_cast<T *>(context)->onOutboxSent(PbDictionaryIteratorRef(iterator));
     }
 
     static void handleOutboxFailed(DictionaryIterator * iterator, AppMessageResult reason, void * context) {
-      reinterpret_cast<T *>(context)->onOutboxFailed(iterator, reason);
+      reinterpret_cast<T *>(context)->onOutboxFailed(PbDictionaryIteratorRef(iterator), reason);
     }
 
     friend PbAppMessages;

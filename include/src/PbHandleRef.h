@@ -16,10 +16,6 @@ public:
     return _handle;
   }
 
-  bool isValid() {
-    return _handle != nullptr;
-  }
-
 protected:
   T _handle;
 };

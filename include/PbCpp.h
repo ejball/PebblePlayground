@@ -40,6 +40,8 @@ namespace PbCpp {
   #include "src/PbTextLayerRef.h"
   #include "src/PbTextLayer.h"
   #include "src/PbTickTimer.h"
+  #include "src/PbTupleRef.h"
+  #include "src/PbDictionaryIteratorRef.h"
   #include "src/PbAppMessages.h"
   #include "src/PbMain.h"
 }
