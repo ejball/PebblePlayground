@@ -42,6 +42,7 @@ namespace PbCpp {
   #include "src/PbTickTimer.h"
   #include "src/PbTupleRef.h"
   #include "src/PbDictionaryIteratorRef.h"
+  #include "src/PbDictionaryReader.h"
   #include "src/PbAppMessages.h"
   #include "src/PbMain.h"
 }

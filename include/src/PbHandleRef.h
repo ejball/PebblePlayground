@@ -16,6 +16,14 @@ public:
     return _handle;
   }
 
+  bool operator==(PbHandleRef<T> other) const {
+    return _handle == other._handle;
+  }
+
+  bool operator!=(PbHandleRef<T> other) const {
+    return _handle != other._handle;
+  }
+
 protected:
   T _handle;
 };

@@ -79,11 +79,8 @@ public:
     PbString temperature;
     PbString conditions;
 
-    // Read first item
-    auto t = iterator.readFirst();
-
     // For all items
-    while (t.handle()) {
+    for (auto t : PbDictionaryReader(iterator)) {
       // Which key was received?
       switch (t.key()) {
       case KEY_TEMPERATURE:
@@ -96,9 +93,6 @@ public:
         PB_LOG_ERROR("Key %d not recognized!", static_cast<int>(t.key()));
         break;
       }
-
-      // Look for next item
-      t = iterator.readNext();
     }
 
     // Assemble full string and display
