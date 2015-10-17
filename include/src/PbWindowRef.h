@@ -17,4 +17,9 @@ public:
   PbLayerRef layer() {
     return PbLayerRef(window_get_root_layer(_handle));
   }
+
+  PbWindowRef & backgroundColor(GColor color) {
+    window_set_background_color(_handle, color);
+    return *this;
+  }
 };

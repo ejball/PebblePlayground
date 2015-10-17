@@ -36,6 +36,10 @@ public:
     return tm_hour > 12 ? tm_hour - 12 : tm_hour != 0 ? tm_hour : 12;
   }
 
+  bool isPM() const {
+    return tm_hour >= 12;
+  }
+
   int weekday() const {
     return tm_wday + 1;
   }
