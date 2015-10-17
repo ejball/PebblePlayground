@@ -1,6 +1,6 @@
-#include "../../../include/PbCpp.cpp"
+#include "../../../include/pbcpp.cpp"
 
-using namespace PbCpp;
+using namespace pbcpp;
 
 static const uint32_t KEY_TEMPERATURE = 0;
 static const uint32_t KEY_CONDITIONS = 1;

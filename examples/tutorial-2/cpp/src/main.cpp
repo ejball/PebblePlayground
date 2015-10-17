@@ -1,6 +1,6 @@
-#include "../../../include/PbCpp.cpp"
+#include "../../../include/pbcpp.cpp"
 
-using namespace PbCpp;
+using namespace pbcpp;
 
 class App {
 public:
