@@ -30,11 +30,10 @@ public:
     return *this;
   }
 
-/*  template <typename T> PbWindow & _handleclicks(T * handlers) {
-    click_handlers_ = handlers;
-    window_set_click_config_provider(_handle, &click_config_provider<T>);
+  template <typename T> PbWindow & clickConfig(T * handlers) {
+    window_set_click_config_provider_with_context(_handle, &provideClickConfig<T>, handlers);
     return *this;
-  }*/
+  }
 
   ~PbWindow() {
     destroy();
@@ -90,50 +89,51 @@ public:
     WindowHandlers _windowHandlers;
   };
 
-/*  template <typename T> class ClickConfig {
+  template <typename T> class ClickConfig {
   public:
-    ClickConfig() {
-    }
-    ClickConfig<T> & _handlesingle_click_up() {
-      window_single_click_subscribe(BUTTON_ID_UP, &single_click_up_handler);
+    ClickConfig() {}
+
+    ClickConfig<T> & singleClickUp() {
+      window_single_click_subscribe(BUTTON_ID_UP, &handleSingleClickUp);
       return *this;
     }
-    ClickConfig<T> & _handlesingle_click_down() {
-      window_single_click_subscribe(BUTTON_ID_DOWN, &single_click_down_handler);
+
+    ClickConfig<T> & singleClickDown() {
+      window_single_click_subscribe(BUTTON_ID_DOWN, &handleSingleClickDown);
       return *this;
     }
-    ClickConfig<T> & _handlesingle_click_select() {
-      window_single_click_subscribe(BUTTON_ID_SELECT, &single_click_select_handler);
+
+    ClickConfig<T> & singleClickSelect() {
+      window_single_click_subscribe(BUTTON_ID_SELECT, &handleSingleClickSelect);
       return *this;
     }
-    ClickConfig<T> & _handlesingle_click_back() {
-      window_single_click_subscribe(BUTTON_ID_BACK, &single_click_back_handler);
+
+    ClickConfig<T> & singleClickBack() {
+      window_single_click_subscribe(BUTTON_ID_BACK, &handleSingleClickBack);
       return *this;
     }
+
   private:
-    static void single_click_up_handler(ClickRecognizerRef recognizer, void * context) {
-      PbWindow & pw = PbWindow::fromHandle(static_cast<Window *>(context));
-      reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_up(pw, recognizer);
+    static void handleSingleClickUp(ClickRecognizerRef recognizer, void * context) {
+      reinterpret_cast<T *>(context)->onSingleClickUp(PbClickRecognizerRef(recognizer));
     }
-    static void single_click_down_handler(ClickRecognizerRef recognizer, void * context) {
-      PbWindow & pw = PbWindow::fromHandle(static_cast<Window *>(context));
-      reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_down(pw, recognizer);
+
+    static void handleSingleClickDown(ClickRecognizerRef recognizer, void * context) {
+      reinterpret_cast<T *>(context)->onSingleClickDown(PbClickRecognizerRef(recognizer));
     }
-    static void single_click_select_handler(ClickRecognizerRef recognizer, void * context) {
-      PbWindow & pw = PbWindow::fromHandle(static_cast<Window *>(context));
-      reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_select(pw, recognizer);
+
+    static void handleSingleClickSelect(ClickRecognizerRef recognizer, void * context) {
+      reinterpret_cast<T *>(context)->onSingleClickSelect(PbClickRecognizerRef(recognizer));
     }
-    static void single_click_back_handler(ClickRecognizerRef recognizer, void * context) {
-      PbWindow & pw = PbWindow::fromHandle(static_cast<Window *>(context));
-      reinterpret_cast<T *>(pw.click_handlers_)->on_single_click_back(pw, recognizer);
+
+    static void handleSingleClickBack(ClickRecognizerRef recognizer, void * context) {
+      reinterpret_cast<T *>(context)->onSingleClickBack(PbClickRecognizerRef(recognizer));
     }
   };
-private:
-  template <typename T> static void click_config_provider(void * context) {
-    PbWindow & pw = fromHandle(static_cast<Window *>(context));
-    ClickConfig<T> config;
-    reinterpret_cast<T *>(pw.click_handlers_)->on_click_config(pw, config);
-  }*/
 
-  //void * click_handlers_;
+private:
+  template <typename T> static void provideClickConfig(void * context) {
+    ClickConfig<T> config;
+    reinterpret_cast<T *>(context)->onClickConfig(config);
+  }
 };

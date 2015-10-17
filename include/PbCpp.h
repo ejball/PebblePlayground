@@ -35,6 +35,7 @@ namespace PbCpp {
   #include "src/PbBitmap.h"
   #include "src/PbLayerRef.h"
   #include "src/PbHasLayer.h"
+  #include "src/PbClickRecognizerRef.h"
   #include "src/PbWindowRef.h"
   #include "src/PbWindow.h"
   #include "src/PbBitmapLayer.h"

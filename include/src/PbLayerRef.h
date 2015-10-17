@@ -9,8 +9,8 @@ public:
   explicit PbLayerRef(Layer * handle)
     : PbHandleRef(handle) {}
 
-  GRect bounds() {
-    return layer_get_bounds(_handle);
+  PbRect bounds() {
+    return PbRect(layer_get_bounds(_handle));
   }
 
   PbLayerRef & bounds(GRect bounds) {
@@ -18,8 +18,8 @@ public:
     return *this;
   }
 
-  GRect frame() {
-    return layer_get_frame(_handle);
+  PbRect frame() {
+    return PbRect(layer_get_frame(_handle));
   }
 
   PbLayerRef & frame(GRect frame) {
