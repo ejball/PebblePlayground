@@ -58,18 +58,19 @@ public:
 
   template <typename... Args> PbString & appendFormat(const char * format, Args... args) {
     int available = _capacity - _length;
-    int needed = snprintf(_text + _length, _capacity - _length, format, args...);
+    int needed = snprintf(_text + _length, available + 1, format, args...);
     if (needed > available) {
-      reserve(_length + needed + 1);
-      needed = snprintf(_text + _length, _capacity - _length, format, args...);
+      reserve(_length + needed);
+      needed = snprintf(_text + _length, needed + 1, format, args...);
     }
     _length += needed;
     return *this;
   }
 
   PbString & appendDateTimeFormat(size_t max, const char * format, const PbDateTimeInfo & dateTimeInfo) {
-    reserve(_length + max + 1);
-    _length += strftime(_text + _length, max, format, &dateTimeInfo);
+    reserve(_length + max);
+    _length += strftime(_text + _length, max + 1, format, &dateTimeInfo);
+    _text[_length] = '\0';
     return *this;
   }
 
@@ -165,16 +166,18 @@ public:
     if (capacity > _capacity) {
       PB_ASSERT(capacity <= maxLength);
       if (_capacity == 0) {
-        _text = reinterpret_cast<char *>(malloc(capacity + 1));
+        ++capacity;
+        _text = reinterpret_cast<char *>(malloc(capacity));
         PB_ASSERT(_text != nullptr);
         _text[0] = '\0';
       }
       else {
+        ++capacity;
         capacity = capacity + (capacity >> 3) + (capacity < 9 ? 3 : 6);
-        _text = reinterpret_cast<char *>(realloc(_text, capacity + 1));
+        _text = reinterpret_cast<char *>(realloc(_text, capacity));
         PB_ASSERT(_text != nullptr);
       }
-      _capacity = static_cast<uint16_t>(capacity);
+      _capacity = static_cast<uint16_t>(capacity - 1);
     }
     return *this;
   }
