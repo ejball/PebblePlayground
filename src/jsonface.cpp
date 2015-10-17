@@ -18,8 +18,7 @@ public:
 
   void onWindowLoad() {
     PbRect bounds = _window.layer().bounds();
-    bounds.origin.y += 16;
-    bounds.size.h -= 32;
+    bounds.top(bounds.top() + 16).height(bounds.height() - 32);
     _textLayer.create(bounds)
       .font(PbFontRef::fromSystem(FONT_KEY_GOTHIC_24_BOLD))
       .backgroundColor(GColorBlack)

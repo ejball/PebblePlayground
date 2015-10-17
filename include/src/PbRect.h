@@ -23,15 +23,35 @@ public:
     return origin.x;
   }
 
+  PbRect & left(int16_t value) {
+    origin.x = value;
+    return *this;
+  }
+
   int16_t top() const {
     return origin.y;
+  }
+
+  PbRect & top(int16_t value) {
+    origin.y = value;
+    return *this;
   }
 
   int16_t width() const {
     return size.w;
   }
 
+  PbRect & width(int16_t value) {
+    size.w = value;
+    return *this;
+  }
+
   int16_t height() const {
     return size.h;
+  }
+
+  PbRect & height(int16_t value) {
+    size.h = value;
+    return *this;
   }
 };
