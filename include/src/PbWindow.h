@@ -9,7 +9,9 @@ public:
   PbWindow & create() {
     destroy();
     _handle = window_create();
+#ifdef PBL_PLATFORM_APLITE
     window_set_fullscreen(_handle, true);
+#endif
     return *this;
   }
 
